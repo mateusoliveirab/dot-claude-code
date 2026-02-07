@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "chrome-devtools": {
+      "command": "npx",
+      "args": [
+        "@anthropic-ai/chrome-devtools-mcp@latest"
+      ]
+    },
+    "shadcn-ui": {
+      "command": "npx",
+      "args": [
+        "@jpisnice/shadcn-ui-mcp-server"
+      ]
+    },
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "supabase-mcp-server@latest"
+      ]
+    }
+  }
+}

@@ -1,0 +1,31 @@
+# Instruções do Projeto — [NOME DO PROJETO]
+
+## Sobre o Projeto
+
+<!-- Descreva brevemente o que é o projeto -->
+
+## Stack
+
+<!-- Liste as tecnologias principais -->
+- Framework:
+- Linguagem:
+- Banco de dados:
+- Estilização:
+
+## Convenções
+
+<!-- Regras específicas do projeto -->
+- Padrão de nomenclatura:
+- Estrutura de pastas:
+- Padrão de commits:
+
+## Regras de Código
+
+<!-- Diretrizes para geração de código -->
+- Sempre usar TypeScript strict mode
+- Preferir composição sobre herança
+- Escrever testes para funcionalidades críticas
+
+## Contexto Importante
+
+<!-- Informações que o Claude precisa saber para trabalhar melhor -->

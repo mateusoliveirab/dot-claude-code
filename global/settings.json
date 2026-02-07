@@ -1,0 +1,103 @@
+{
+  "model": "claude-opus-4-5-20251101",
+  "alwaysThinkingEnabled": true,
+  "promptSuggestionEnabled": false,
+  "permissions": {
+    "alwaysAllow": [
+      {
+        "tool": "Read",
+        "pathPattern": "src/**/*"
+      },
+      {
+        "tool": "Read",
+        "pathPattern": "app/**/*"
+      },
+      {
+        "tool": "Read",
+        "pathPattern": "components/**/*"
+      },
+      {
+        "tool": "Read",
+        "pathPattern": "lib/**/*"
+      },
+      {
+        "tool": "Read",
+        "pathPattern": "*.md"
+      },
+      {
+        "tool": "Read",
+        "pathPattern": "*.json"
+      },
+      {
+        "tool": "Grep",
+        "pathPattern": "**/*.ts"
+      },
+      {
+        "tool": "Grep",
+        "pathPattern": "**/*.tsx"
+      },
+      {
+        "tool": "Grep",
+        "pathPattern": "**/*.js"
+      },
+      {
+        "tool": "Grep",
+        "pathPattern": "**/*.jsx"
+      },
+      {
+        "tool": "Glob",
+        "pathPattern": "**/*"
+      },
+      {
+        "tool": "Bash",
+        "prompt": "run linting"
+      },
+      {
+        "tool": "Bash",
+        "prompt": "run type checking"
+      },
+      {
+        "tool": "Bash",
+        "prompt": "run tests"
+      },
+      {
+        "tool": "Bash",
+        "prompt": "check git status"
+      },
+      {
+        "tool": "Bash",
+        "prompt": "show git diff"
+      },
+      {
+        "tool": "Bash",
+        "prompt": "show git log"
+      }
+    ],
+    "alwaysDeny": [
+      {
+        "tool": "Bash",
+        "prompt": "force delete files or directories"
+      },
+      {
+        "tool": "Bash",
+        "prompt": "force push to git"
+      },
+      {
+        "tool": "Write",
+        "pathPattern": ".env"
+      },
+      {
+        "tool": "Write",
+        "pathPattern": ".env.*"
+      },
+      {
+        "tool": "Write",
+        "pathPattern": "**/credentials.json"
+      },
+      {
+        "tool": "Write",
+        "pathPattern": "**/secrets.json"
+      }
+    ]
+  }
+}

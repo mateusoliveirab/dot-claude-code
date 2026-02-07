@@ -1,0 +1,20 @@
+# Credenciais e segredos
+*.env
+.env.*
+credentials.json
+secrets.json
+
+# Backups locais
+backup-*/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+*.swp
+*.swo
+*~
+
+# Node
+node_modules/
