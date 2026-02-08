@@ -110,6 +110,30 @@ dot-claude-code-installation/
 - **Reusable** — Skills work across projects
 - **Safe** — Granular permissions, fewer prompts for routine stuff
 
+## Things I Learned Using This Daily
+
+### Auto Memory exists (and you probably don't know about it)
+
+Claude Code has automatic memory at `~/.claude/projects/<project>/memory/MEMORY.md`. It's **local** (not versioned), where Claude writes learnings between conversations.
+
+**The key insight:** Don't rely on it alone. Important learnings should go to versioned files:
+
+| Use MEMORY.md for | Use versioned files for |
+|-------------------|-------------------------|
+| AI drafts, personal preferences | Official docs, team knowledge |
+| Short-term reminders | Architectural decisions |
+| Trial and error notes | `CLAUDE.md`, `CONTRIBUTING.md`, `ARCHITECTURE.md`, `docs/` |
+
+**Files that work well with Claude Code:**
+- `CLAUDE.md` — project-specific instructions for Claude
+- `CONTRIBUTING.md` — code standards, workflow, setup
+- `ARCHITECTURE.md` — technical decisions, why we chose X over Y
+- `docs/` — feature and module documentation
+
+If something in MEMORY.md matters for the team, promote it to proper documentation.
+
+[Full docs on auto memory →](docs/AUTO_MEMORY.md)
+
 ## License
 
 MIT — feel free to use, modify, and distribute as needed.
