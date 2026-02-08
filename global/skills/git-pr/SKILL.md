@@ -1,16 +1,16 @@
 ---
 name: git-pr
-description: Prepare pull request content with comprehensive analysis using git CLI only (not gh CLI). Use when creating PRs, analyzing branch changes, or generating PR descriptions.
+description: Prepare comprehensive PR content for manual creation. Use when analyzing branch changes, generating PR descriptions, or preparing to open a pull request.
 auto_invoke: false
 compatibility: Requires git, bash. Works with GitHub, GitLab, Bitbucket via web interface.
 metadata:
-  author: Claude Code
-  version: "1.0.0"
+  author: User
+  version: "2.0.0"
 ---
 
-# Git PR Skill
+# Git PR
 
-Prepares comprehensive PR descriptions. Uses `git` CLI only, not `gh` CLI.
+Prepares comprehensive PR content for manual creation. I prefer to open PRs manually because it's the moment I review and ensure everything is correct.
 
 ## Usage
 
@@ -20,56 +20,101 @@ Prepares comprehensive PR descriptions. Uses `git` CLI only, not `gh` CLI.
 
 Default target: `main`
 
+## Why Manual PR Creation?
+
+Opening PRs manually allows me to:
+- Review all changes one final time before submitting
+- Verify the PR title and description are accurate
+- Check that only intended changes are included
+- Ensure quality before sharing with the team
+
 ## Workflow
 
-1. **Analyze branch**: Run helper script for overview:
+1. **Analyze branch**:
    ```bash
-   scripts/analyze-pr.sh [target-branch]
+   scripts/pr-helper.sh analyze [target-branch]
    ```
 
-2. **Check current state**:
-   - Verify clean working tree
-   - Get current branch name
-   - Check remote tracking
+2. **Generate PR content**:
+   ```bash
+   scripts/pr-helper.sh generate [target-branch]
+   ```
+   Creates complete PR description in the format below
 
-3. **Review changes**:
-   - Run `git diff [target]...HEAD` for full changes
-   - Run `git log [target]..HEAD --oneline` for commits
-   - Note file count and types
+3. **Review output**:
+   - Read the generated title and description
+   - Verify all sections are accurate
 
-4. **Generate content**:
-   - **Title**: Use format from [references/PR_REFERENCE.md](references/PR_REFERENCE.md)
-   - **Description**: Use template from [assets/PR_TEMPLATE.md](assets/PR_TEMPLATE.md)
-   - Include summary, changes, testing notes
+4. **Open PR manually**:
+   - Go to GitHub/GitLab web interface
+   - Use the generated title and description
+   - Submit the PR
 
-5. **Output**: Present title and description in markdown format
-
-## PR Content Format
+## PR Format
 
 ### Title
 ```
-<type>: Brief description (max 50 chars)
+<type>: Brief description
 ```
 
-### Description Sections
-1. **Summary** - What and why
-2. **Changes** - Bullet list
-3. **Testing** - How verified
-4. **Related** - Issue links
+Examples:
+- `feat: add user authentication`
+- `fix: resolve memory leak in parser`
+- `docs: update installation guide`
+
+### Description Template
+
+```markdown
+## Summary
+Brief overview of what this PR accomplishes.
+
+## What, Why & Benefits
+
+**What:**
+- Change 1
+- Change 2
+
+**Why:**
+Explanation of the motivation behind these changes
+
+**Benefits:**
+- Benefit 1
+- Benefit 2
+
+## Validation
+- [ ] Code follows project conventions
+- [ ] Self-review completed
+- [ ] No sensitive data in changes
+- [ ] Tests pass locally
+
+## Changes
+| File | Change |
+|------|--------|
+| `path/to/file1` | Brief description |
+| `path/to/file2` | Brief description |
+
+## Testing/Validations
+- [ ] Tested locally
+- [ ] Unit tests added/updated
+- [ ] Integration tests pass
+- [ ] Manual testing completed
+```
 
 ## Scripts
 
-- `scripts/analyze-pr.sh [target]` - Analyze branch and check readiness
+- `scripts/pr-helper.sh analyze [target]` - Analyze branch changes
+- `scripts/pr-helper.sh generate [target]` - Generate complete PR content
+- `scripts/pr-helper.sh summary [target]` - Show branch summary
 
-## Reference
+## Best Practices
 
-See [references/PR_REFERENCE.md](references/PR_REFERENCE.md) for:
-- PR readiness checklist
-- Change analysis commands
-- Content creation guidelines
+- Always review generated content before using
+- Ensure description accurately reflects changes
+- Include context for reviewers
+- Check all validation checkboxes
 
 ## Safety
 
-- Never force push
-- Verify branch state before suggesting PR
-- Check for sensitive data in diff
+- Never include sensitive data in PR descriptions
+- Verify branch is clean before generating
+- Double-check target branch is correct

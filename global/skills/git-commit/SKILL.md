@@ -1,16 +1,16 @@
 ---
 name: git-commit
-description: Streamlined git commit workflow with best practices including sensitive file detection and conventional commit format validation. Use when creating commits, staging files, or validating commit messages.
+description: Create well-formatted commits using conventional commits. Groups related changes by functionality. Use when committing staged changes or preparing commits.
 auto_invoke: false
 compatibility: Requires git, bash. Works in any git repository.
 metadata:
-  author: Claude Code
-  version: "1.0.0"
+  author: User
+  version: "2.0.0"
 ---
 
-# Git Commit Skill
+# Git Commit
 
-Creates well-formatted commits following best practices. Validates for sensitive files and ensures proper message format.
+Creates well-formatted commits following conventional commits. Groups related changes by functionality rather than atomic file-by-file commits.
 
 ## Usage
 
@@ -20,43 +20,72 @@ Creates well-formatted commits following best practices. Validates for sensitive
 
 ## Workflow
 
-1. **Check status**: Run `git status` to see staged/unstaged changes
-2. **Show diff**: Run `git diff --staged` to review what will be committed
-3. **Validate**: Use helper script to check for sensitive files:
+1. **Analyze changes**:
    ```bash
-   scripts/validate-commit.sh --check-sensitive
+   scripts/commit-helper.sh analyze
    ```
-4. **Analyze**: Review changes to understand scope
-5. **Draft message**: Create concise, descriptive message following conventions from [references/COMMIT_REFERENCE.md](references/COMMIT_REFERENCE.md)
-6. **Validate message**: Check format:
+   - Shows modified files grouped by category
+   - Suggests commit type based on changes
+
+2. **Review and group**:
+   - Group related files (same functionality)
+   - Don't do atomic commits per file
+   - Make commits per feature/bug/refactor
+
+3. **Create message**:
    ```bash
-   scripts/validate-commit.sh --message <msg-file>
+   scripts/commit-helper.sh suggest
    ```
-7. **Stage files**: Add specific files with `git add <files>`
-8. **Create commit**: Run `git commit -m "message"` (use heredoc for multi-line)
-9. **Verify**: Run `git log -1` to confirm
+   - Suggests message based on staged files
+   - Follows conventional commits format
+
+4. **Execute**:
+   ```bash
+   git add <related-files>
+   git commit -m "type: description"
+   ```
 
 ## Message Format
 
-- **Type prefix**: `feat:`, `fix:`, `docs:`, `style:`, `refactor:`, `test:`, `chore:`
-- **First line**: Max 50 chars, imperative mood ("Add" not "Added")
-- **Body**: Optional, explain the "why" if needed
+```
+<type>(<scope>): <description>
 
-## Best Practices
+[optional body]
 
-- Never use `git add .` or `git add -A` (can include sensitive files)
-- Always stage files individually by name
-- Check [references/COMMIT_REFERENCE.md](references/COMMIT_REFERENCE.md) for sensitive file patterns
-- Never commit with `--no-verify` unless explicitly requested
-- Add co-authorship when appropriate: `Co-Authored-By: Name <email>`
+[optional footer]
+```
+
+**Types**:
+- `feat` - New feature
+- `fix` - Bug fix
+- `docs` - Documentation
+- `style` - Code style/formatting (no logic change)
+- `refactor` - Code refactoring
+- `test` - Tests
+- `chore` - Maintenance tasks
+
+**Rules**:
+- First line: max 50 characters
+- Imperative mood: "Add" not "Added"
+- Clear description of what changes
+- Optional body explains why
 
 ## Scripts
 
-- `scripts/validate-commit.sh --check-sensitive` - Detect sensitive files
-- `scripts/validate-commit.sh --message <file>` - Validate message format
+- `scripts/commit-helper.sh analyze` - Analyzes and groups changes
+- `scripts/commit-helper.sh suggest` - Suggests commit message
+- `scripts/commit-helper.sh validate` - Validates message format
+- `scripts/commit-helper.sh summary` - Shows analysis summary
+
+## Best Practices
+
+- Commit by functionality, not by file
+- Use specific `git add`, never `git add .`
+- Small, focused commits
+- Message explains "what", body explains "why"
 
 ## Safety
 
-- Never run destructive commands (reset --hard, checkout ., etc.)
-- Always show what will be committed before committing
-- Skip if no changes present
+- Never commit sensitive files (.env, tokens)
+- Always review before committing
+- Don't use --no-verify
