@@ -1,6 +1,6 @@
 # Templates
 
-This directory contains templates for creating new content in the dot-claude-code repository.
+This directory contains templates for creating new content in the dot-claude-code-installation repository.
 
 ## Available Templates
 

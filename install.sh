@@ -27,7 +27,7 @@ run_cmd() {
     fi
 }
 
-echo -e "${BLUE}=== dot-claude-code installer ===${NC}"
+echo -e "${BLUE}=== dot-claude-code-installation ===${NC}"
 if [ "$DRY_RUN" = true ]; then
     echo -e "${CYAN}(dry-run mode - no changes will be made)${NC}"
 fi
