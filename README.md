@@ -1,5 +1,15 @@
 # dot-claude-code
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Last Commit](https://img.shields.io/github/last-commit/mateusoliveirab/dot-claude-code)](https://github.com/mateusoliveirab/dot-claude-code/commits/main)
+[![Repo Size](https://img.shields.io/github/repo-size/mateusoliveirab/dot-claude-code)](https://github.com/mateusoliveirab/dot-claude-code)
+[![Made with Bash](https://img.shields.io/badge/Made%20with-Bash-1f425f.svg?logo=gnubash&logoColor=white)](https://www.gnu.org/software/bash/)
+[![VS Code](https://img.shields.io/badge/VS%20Code-Development-007ACC?logo=visualstudiocode&logoColor=white)](https://code.visualstudio.com/)
+[![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?logo=ubuntu&logoColor=white)](https://ubuntu.com/)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-Powered-d97757?logo=anthropic)](https://claude.com/claude-code)
+[![opencode](https://img.shields.io/badge/opencode-Powered-22c55e)](https://opencode.ai)
+[![Git](https://img.shields.io/badge/Git-Control-f05032?logo=git&logoColor=white)](https://git-scm.com/)
+
 Personal Claude Code setup — global instructions, modular rules, skills, MCP servers, and granular permissions, versioned with an install script.
 
 ## Philosophy
