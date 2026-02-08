@@ -110,18 +110,6 @@ dot-claude-code-installation/
 - **Reusable** — Skills work across projects
 - **Safe** — Granular permissions, fewer prompts for routine stuff
 
-## Contributing
-
-This setup started as my personal configuration, but contributions are welcome. Whether you have ideas for new skills, improvements to existing rules, or better documentation, your feedback is always appreciated.
-
-To contribute:
-- **New Skills**: Add reusable workflows that others might find useful
-- **Rule Improvements**: Enhance existing guidelines or add new topic-specific rules
-- **Documentation**: Help improve clarity or add examples
-- **Bug Fixes**: Fix issues you encounter while using the setup
-
-Feel free to open an issue to discuss ideas or submit a pull request with your changes.
-
 ## License
 
 MIT — feel free to use, modify, and distribute as needed.
