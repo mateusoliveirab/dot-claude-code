@@ -1,8 +1,8 @@
-# dot-claude-code
+# dot-claude-code-installation
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Last Commit](https://img.shields.io/github/last-commit/mateusoliveirab/dot-claude-code)](https://github.com/mateusoliveirab/dot-claude-code/commits/main)
-[![Repo Size](https://img.shields.io/github/repo-size/mateusoliveirab/dot-claude-code)](https://github.com/mateusoliveirab/dot-claude-code)
+[![Last Commit](https://img.shields.io/github/last-commit/mateusoliveirab/dot-claude-code-installation)](https://github.com/mateusoliveirab/dot-claude-code-installation/commits/main)
+[![Repo Size](https://img.shields.io/github/repo-size/mateusoliveirab/dot-claude-code-installation)](https://github.com/mateusoliveirab/dot-claude-code-installation)
 [![Made with Bash](https://img.shields.io/badge/Made%20with-Bash-1f425f.svg?logo=gnubash&logoColor=white)](https://www.gnu.org/software/bash/)
 [![VS Code](https://img.shields.io/badge/VS%20Code-Development-007ACC?logo=visualstudiocode&logoColor=white)](https://code.visualstudio.com/)
 [![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?logo=ubuntu&logoColor=white)](https://ubuntu.com/)
@@ -54,8 +54,8 @@ Pre-configured servers:
 ## Quick Start
 
 ```bash
-git clone https://github.com/mateusoliveirab/dot-claude-code.git
-cd dot-claude-code
+git clone https://github.com/mateusoliveirab/dot-claude-code-installation.git
+cd dot-claude-code-installation
 
 # Optional: set up env vars for MCPs
 cp .env.example .env
@@ -89,7 +89,7 @@ Edit `~/.claude/settings.json` to tweak permissions.
 ## Structure
 
 ```
-dot-claude-code/
+dot-claude-code-installation/
 ├── install.sh              # One-command install
 ├── global/
 │   ├── CLAUDE.md          # Core instructions
