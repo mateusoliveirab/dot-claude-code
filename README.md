@@ -10,265 +10,118 @@
 [![opencode](https://img.shields.io/badge/opencode-Powered-22c55e)](https://opencode.ai)
 [![Git](https://img.shields.io/badge/Git-Control-f05032?logo=git&logoColor=white)](https://git-scm.com/)
 
-Personal Claude Code setup — global instructions, modular rules, skills, MCP servers, and granular permissions, versioned with an install script.
+My personal Claude Code setup — modular rules, reusable skills, MCP servers, and sane defaults. Versioned with git and easy to install.
 
-## Philosophy
+The idea is simple: instead of one giant CLAUDE.md file, split instructions into focused rules that Claude loads automatically. Keep everything in git so you can track changes and sync across machines.
 
-This setup combines:
-- **`CLAUDE.md`** — Core global instructions (always loaded)
-- **`rules/*.md`** — Modular topic-specific rules (also loaded automatically)
+If you already have a `~/.claude/CLAUDE.md`, don't worry — the install script preserves it. You can gradually migrate content to rules or keep using both.
 
-Rules expand on the base instructions and allow organizing guidelines by topic. Both are loaded by Claude Code.
+## What's Included
 
-## Components
-
-### Global Instructions (`global/CLAUDE.md`)
-
-Core instructions that apply to all conversations:
-- Communication guidelines
-- Working approach
-- Dev workflow preferences
-- MCP server usage
+### Core Instructions (`global/CLAUDE.md`)
+Base instructions that apply to every conversation — communication style, working approach, MCP usage.
 
 ### Modular Rules (`global/rules/`)
+Topic-specific guidelines loaded automatically:
 
-Topic-specific instruction files loaded automatically by Claude Code:
-
-| Rule | Purpose |
-|---|---|
-| `communication.md` | Communication guidelines, clarification rules |
-| `working-approach.md` | Task execution approach, fast mode usage |
-| `dev-workflow.md` | Development workflow, git preferences |
-| `mcp-usage.md` | MCP server usage guidelines and shortcuts |
-| `auto-memory.md` | Auto-learning and memory management |
-
-**Key benefit**: Claude loads all rules automatically, but you can organize them logically and extend with topic-specific rules as needed.
+| Rule | What it covers |
+|------|----------------|
+| `communication.md` | How I like to communicate, when to ask vs do |
+| `working-approach.md` | Task execution, fast mode usage |
+| `dev-workflow.md` | Git workflow, commit preferences |
+| `mcp-usage.md` | MCP shortcuts and guidelines |
+| `auto-memory.md` | When to update MEMORY.md |
 
 ### Skills (`global/skills/`)
+Reusable workflows invoked with `/command`:
 
-Reusable workflows invoked with `/skill-name`:
-
-| Skill | Command | Purpose |
-|---|---|---|
-| `git-commit` | `/git-commit` | Streamlined git commit workflow with best practices |
-| `git-pr` | `/git-pr` | Prepare pull request content (git CLI, not gh CLI) |
-
-Skills can include supporting files (templates, examples, scripts) in their directories.
+| Skill | Command | What it does |
+|-------|---------|--------------|
+| `git-commit` | `/git-commit` | Conventional commits, groups by functionality |
+| `git-pr` | `/git-pr` | Generate PR content (I open manually to review) |
 
 ### Settings (`global/settings.json`)
-
-| Setting | Value | Description |
-|---|---|---|
-| `alwaysThinkingEnabled` | `true` | Thinking mode always on (use `/fast` for simple tasks) |
-| `promptSuggestionEnabled` | `false` | Prompt suggestions disabled |
-| `permissions.alwaysAllow` | Array | Auto-approve safe operations (Read, Grep, Glob, common git/lint commands) |
-| `permissions.alwaysDeny` | Array | Block dangerous operations (force delete, force push, writing to .env files) |
-
-**Key benefit**: Fewer permission prompts for routine operations, strong protection for dangerous actions.
+- Thinking mode always on (use `/fast` for quick tasks)
+- Granular permissions — auto-approve safe operations, block dangerous ones
+- No prompt suggestions (cleaner experience)
 
 ### MCP Servers (`global/mcp.json`)
+Pre-configured servers:
+- **Chrome DevTools** — UI validation
+- **Shadcn UI** — Component lookup
+- **Supabase** — DB operations (needs `SUPABASE_ACCESS_TOKEN`)
 
-| Server | Usage | Configuration |
-|---|---|---|
-| **Chrome DevTools** | Validate UI changes, inspect elements, verify layout | None required |
-| **Shadcn UI** | Add/lookup shadcn/ui components | None required |
-| **Supabase** | Database operations, authentication and storage | Requires `SUPABASE_ACCESS_TOKEN` (see setup below) |
-
-### Extensibility
-
-| Directory | Purpose | Status |
-|---|---|---|
-| `global/agents/` | Custom subagent definitions | Available (empty) |
-| `global/skills/` | Reusable skills and workflows | 2 skills included |
-| `global/rules/` | Modular topic-specific rules | 5 rules included |
-
-### Project Template (`templates/CLAUDE.md.example`)
-
-Base template for creating `CLAUDE.md` in new projects with sections for stack, conventions and code rules.
-
-## Installation
-
-### Prerequisites
-
-- **jq** — Required for merging MCP servers into your config
-  ```bash
-  # Ubuntu/Debian
-  sudo apt install jq
-
-  # macOS
-  brew install jq
-  ```
-
-### Install
+## Quick Start
 
 ```bash
 git clone https://github.com/mateusoliveirab/dot-claude-code.git
 cd dot-claude-code
 
-# Optional: Configure your environment variables
+# Optional: set up env vars for MCPs
 cp .env.example .env
-# Edit .env with your tokens (e.g., SUPABASE_ACCESS_TOKEN)
+# edit .env with your tokens
 
 bash install.sh
 ```
 
-The script will:
-1. Create `~/.claude/` if it doesn't exist
-2. Back up existing config to `~/.claude/backup-YYYYMMDD-HHMMSS/` (including `~/.claude.json`)
-3. Load environment variables from `.env` (if exists)
-4. Install `CLAUDE.md`, `settings.json` to `~/.claude/`
-5. Install `mcp.json` as reference to `~/.claude/mcp.json`
-6. **Merge MCP servers** into `~/.claude.json` (with env vars substituted)
-7. Copy `agents/`, `skills/` and `rules/` directories to `~/.claude/`
+The script installs everything to `~/.claude/` and backs up existing configs. Restart Claude Code after install.
 
-**Important**: Restart Claude Code after installation to load the new MCPs.
+**Needs:** `jq` for MCP merging (`sudo apt install jq` or `brew install jq`)
 
-**Note**: If `jq` is not installed, the script will skip MCP merging and show instructions for manual configuration.
+## Customizing
 
-### Configuring Environment Variables
-
-Some MCP servers require authentication tokens. The install script automatically substitutes variables from `.env`:
-
-1. **Copy the example file**:
-   ```bash
-   cp .env.example .env
-   ```
-
-2. **Add your tokens** (edit `.env`):
-   ```bash
-   # Supabase MCP - Get from: https://supabase.com/dashboard/account/tokens
-   SUPABASE_ACCESS_TOKEN=sbp_your_actual_token_here
-
-   # Add other MCP tokens as needed
-   # GITHUB_TOKEN=your_token_here
-   ```
-
-3. **Run install.sh**:
-   ```bash
-   bash install.sh
-   ```
-
-The script will:
-- Load all variables from `.env`
-- Substitute `${VARIABLE_NAME}` placeholders in `mcp.json`
-- Merge the configured MCPs into `~/.claude.json`
-
-**Note**: The `.env` file is gitignored for security. Use `.env.example` as a reference.
-
-## Customization
-
-### Adding Rules
-
-Create new `.md` files in `~/.claude/rules/`:
-
-```bash
-# Example: Frontend-specific rules
-~/.claude/rules/frontend/react.md
-~/.claude/rules/frontend/tailwind.md
-
-# Example: Backend-specific rules
-~/.claude/rules/backend/api.md
-~/.claude/rules/backend/database.md
-```
-
-Rules support frontmatter for advanced control:
+Add your own rules in `~/.claude/rules/`. Use frontmatter for control:
 
 ```markdown
 ---
-description: React component conventions
-paths: ["src/components/**/*", "app/components/**/*"]
+description: React conventions
+paths: ["src/components/**/*"]
 ---
 
-# React Rules
-
-- Always use TypeScript
-- Prefer function components over class components
-...
+- Use TypeScript
+- Prefer function components
 ```
 
-### Adding Skills
+Create new skills by copying `templates/skill-template/`. Check `global/skills/` for examples.
 
-Create skill directories in `~/.claude/skills/`:
-
-```bash
-~/.claude/skills/my-skill/
-├── SKILL.md           # Required - main instructions
-├── template.md        # Optional - templates for Claude to fill in
-├── examples/
-│   └── sample.md      # Optional - example outputs
-└── scripts/
-    └── helper.py      # Optional - utility scripts
-```
-
-### Modifying Permissions
-
-Edit `~/.claude/settings.json`:
-
-```json
-{
-  "permissions": {
-    "alwaysAllow": [
-      { "tool": "Read", "pathPattern": "your-dir/**/*" }
-    ],
-    "alwaysDeny": [
-      { "tool": "Bash", "prompt": "dangerous operation" }
-    ]
-  }
-}
-```
-
-### Project-Level Customization
-
-Both global (`~/.claude/`) and project-level (`.claude/`) configurations are supported. Project-level settings override global ones.
+Edit `~/.claude/settings.json` to tweak permissions.
 
 ## Structure
 
 ```
 dot-claude-code/
-├── README.md
-├── install.sh
-├── .gitignore
+├── install.sh              # One-command install
 ├── global/
-│   ├── settings.json         # Claude Code settings with granular permissions
-│   ├── mcp.json              # MCP server configuration
-│   ├── agents/               # Custom subagent definitions (empty, planned)
-│   ├── skills/               # Reusable skills (git-commit, git-pr)
+│   ├── CLAUDE.md          # Core instructions
+│   ├── settings.json      # Permissions & preferences
+│   ├── mcp.json          # MCP server configs
+│   ├── skills/           # Reusable workflows
 │   │   ├── git-commit/
-│   │   │   └── SKILL.md
 │   │   └── git-pr/
-│   │       └── SKILL.md
-│   └── rules/                # Modular topic-specific rules
-│       ├── communication.md
-│       ├── working-approach.md
-│       ├── dev-workflow.md
-│       ├── mcp-usage.md
-│       └── auto-memory.md
+│   └── rules/            # Topic-specific rules
 └── templates/
-    └── CLAUDE.md.example     # Template for new projects
+    └── skill-template/   # Copy this for new skills
 ```
 
-## Benefits Over Monolithic CLAUDE.md
+## Why This Approach?
 
-1. **Better organization**: Rules grouped by topic
-2. **Easier maintenance**: Edit individual rule files
-3. **Extensibility**: Add new rules without touching existing ones
-4. **Selective loading**: Future support for path-based rule filtering
-5. **Version control**: Easier to track changes per topic
-6. **Reusability**: Skills provide powerful workflows beyond simple instructions
-7. **Efficiency**: Fewer permission prompts with granular permissions
+- **Modular** — Rules by topic instead of one huge file
+- **Versioned** — Track changes per rule in git
+- **Reusable** — Skills work across projects
+- **Safe** — Granular permissions, fewer prompts for routine stuff
 
-## Migration from CLAUDE.md
+## Contributing
 
-If you have an existing `~/.claude/CLAUDE.md`:
+This setup started as my personal configuration, but contributions are welcome. Whether you have ideas for new skills, improvements to existing rules, or better documentation, your feedback is always appreciated.
 
-1. The install script preserves it (doesn't overwrite)
-2. Both `CLAUDE.md` and `rules/*.md` will be loaded
-3. Consider migrating content from `CLAUDE.md` to appropriate rule files
-4. Once migrated, you can remove `CLAUDE.md`
+To contribute:
+- **New Skills**: Add reusable workflows that others might find useful
+- **Rule Improvements**: Enhance existing guidelines or add new topic-specific rules
+- **Documentation**: Help improve clarity or add examples
+- **Bug Fixes**: Fix issues you encounter while using the setup
 
-## Available Skills
+Feel free to open an issue to discuss ideas or submit a pull request with your changes.
 
-After installation, invoke these skills with:
+## License
 
-- `/git-commit` — Streamlined commit workflow with best practices
-- `/git-pr [target-branch]` — Prepare PR content for GitHub (uses git CLI)
+MIT — feel free to use, modify, and distribute as needed.
