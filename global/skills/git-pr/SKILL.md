@@ -1,12 +1,16 @@
 ---
 name: git-pr
-description: Create a pull request with comprehensive description (git CLI workflow)
+description: Prepare pull request content with comprehensive analysis using git CLI only (not gh CLI). Use when creating PRs, analyzing branch changes, or generating PR descriptions.
 auto_invoke: false
+compatibility: Requires git, bash. Works with GitHub, GitLab, Bitbucket via web interface.
+metadata:
+  author: Claude Code
+  version: "1.0.0"
 ---
 
 # Git PR Skill
 
-Prepares for creating a pull request with a comprehensive description. This skill uses `git` CLI only (not `gh` CLI).
+Prepares comprehensive PR descriptions. Uses `git` CLI only, not `gh` CLI.
 
 ## Usage
 
@@ -14,54 +18,58 @@ Prepares for creating a pull request with a comprehensive description. This skil
 /git-pr [target-branch]
 ```
 
-Default target branch: `main`
+Default target: `main`
 
 ## Workflow
 
-When invoked:
+1. **Analyze branch**: Run helper script for overview:
+   ```bash
+   scripts/analyze-pr.sh [target-branch]
+   ```
 
-1. **Check current state**:
-   - Run `git status` to verify clean working tree
-   - Run `git branch --show-current` to get current branch name
-   - Check if branch tracks remote with `git rev-parse --abbrev-ref @{u}`
+2. **Check current state**:
+   - Verify clean working tree
+   - Get current branch name
+   - Check remote tracking
 
-2. **Analyze changes**:
-   - Run `git diff [target-branch]...HEAD` to see all changes in this branch
-   - Run `git log [target-branch]..HEAD --oneline` to see all commits
-   - Review ALL commits (not just the latest) to understand full scope
+3. **Review changes**:
+   - Run `git diff [target]...HEAD` for full changes
+   - Run `git log [target]..HEAD --oneline` for commits
+   - Note file count and types
 
-3. **Draft PR content**:
-   - **Title**: Short (under 70 characters), descriptive
-   - **Description**:
-     ```markdown
-     ## Summary
-     - Bullet point 1
-     - Bullet point 2
-     - Bullet point 3
+4. **Generate content**:
+   - **Title**: Use format from [references/PR_REFERENCE.md](references/PR_REFERENCE.md)
+   - **Description**: Use template from [assets/PR_TEMPLATE.md](assets/PR_TEMPLATE.md)
+   - Include summary, changes, testing notes
 
-     ## Changes
-     - List of key changes
+5. **Output**: Present title and description in markdown format
 
-     ## Testing
-     - [ ] Manual testing completed
-     - [ ] Tests added/updated
-     - [ ] No console errors
+## PR Content Format
 
-     🤖 Generated with [Claude Code](https://claude.com/claude-code)
-     ```
+### Title
+```
+<type>: Brief description (max 50 chars)
+```
 
-4. **Push to remote** (if needed):
-   - If branch doesn't track remote: `git push -u origin <branch-name>`
-   - If already tracking but behind: `git push`
+### Description Sections
+1. **Summary** - What and why
+2. **Changes** - Bullet list
+3. **Testing** - How verified
+4. **Related** - Issue links
 
-5. **Provide PR creation instructions**:
-   - Give user the PR title and description
-   - Provide URL: `https://github.com/<user>/<repo>/compare/<target>...<branch>`
-   - User will create PR via GitHub web interface
+## Scripts
 
-## Important Notes
+- `scripts/analyze-pr.sh [target]` - Analyze branch and check readiness
 
-- This skill does NOT create the PR (no `gh` CLI)
-- It prepares the content and pushes the branch
-- User creates PR manually via GitHub web UI
-- Always analyze ALL commits in the branch, not just the latest one
+## Reference
+
+See [references/PR_REFERENCE.md](references/PR_REFERENCE.md) for:
+- PR readiness checklist
+- Change analysis commands
+- Content creation guidelines
+
+## Safety
+
+- Never force push
+- Verify branch state before suggesting PR
+- Check for sensitive data in diff
