@@ -1,10 +1,9 @@
-# Credenciais e segredos
-*.env
-.env.*
+# Credentials and secrets
+.env
 credentials.json
 secrets.json
 
-# Backups locais
+# Local backups
 backup-*/
 
 # OS

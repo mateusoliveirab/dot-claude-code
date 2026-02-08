@@ -1,31 +1,46 @@
-# Instruções do Projeto — [NOME DO PROJETO]
+# Project Instructions — [PROJECT NAME]
 
-## Sobre o Projeto
+## About the Project
 
-<!-- Descreva brevemente o que é o projeto -->
+<!-- Briefly describe what the project is -->
 
 ## Stack
 
-<!-- Liste as tecnologias principais -->
+<!-- List the main technologies -->
 - Framework:
-- Linguagem:
-- Banco de dados:
-- Estilização:
+- Language:
+- Database:
+- Styling:
 
-## Convenções
+## Conventions
 
-<!-- Regras específicas do projeto -->
-- Padrão de nomenclatura:
-- Estrutura de pastas:
-- Padrão de commits:
+<!-- Project-specific rules -->
+- Naming convention:
+- Folder structure:
+- Commit pattern:
 
-## Regras de Código
+## Code Rules
 
-<!-- Diretrizes para geração de código -->
-- Sempre usar TypeScript strict mode
-- Preferir composição sobre herança
-- Escrever testes para funcionalidades críticas
+<!-- Guidelines for code generation -->
+- Always use TypeScript strict mode
+- Prefer composition over inheritance
+- Write tests for critical functionality
 
-## Contexto Importante
+## Important Context
 
-<!-- Informações que o Claude precisa saber para trabalhar melhor -->
+<!-- Information that Claude needs to know to work better -->
+
+## Lessons Learned
+
+<!-- Document common mistakes, gotchas, and solutions to help avoid repeating issues -->
+
+### Common Issues & Solutions
+<!-- Example: "Database connection timeout after 30min → Always implement connection pooling" -->
+
+### What Works / What Doesn't
+<!-- Example: "✅ Library X handles large datasets efficiently" -->
+<!-- Example: "❌ Avoid approach Y for Z scenario (causes performance issues)" -->
+
+### Important Gotchas
+<!-- Example: "API tokens expire after 1 hour - always check expiry before requests" -->
+<!-- Example: "Feature A must run before Feature B, otherwise state becomes inconsistent" -->

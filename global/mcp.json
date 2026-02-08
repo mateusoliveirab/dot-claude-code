@@ -3,7 +3,7 @@
     "chrome-devtools": {
       "command": "npx",
       "args": [
-        "@anthropic-ai/chrome-devtools-mcp@latest"
+        "chrome-devtools-mcp@latest"
       ]
     },
     "shadcn-ui": {
@@ -15,8 +15,12 @@
     "supabase": {
       "command": "npx",
       "args": [
-        "supabase-mcp-server@latest"
-      ]
+        "-y",
+        "@supabase/mcp-server-supabase@latest"
+      ],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "${SUPABASE_ACCESS_TOKEN}"
+      }
     }
   }
 }

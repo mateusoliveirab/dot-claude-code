@@ -45,6 +45,17 @@ fi
 BACKED_UP=false
 FILES_TO_BACKUP=("CLAUDE.md" "settings.json" "mcp.json")
 
+# Also backup ~/.claude.json if it exists
+if [ -f "$HOME/.claude.json" ]; then
+    if [ "$BACKED_UP" = false ]; then
+        echo -e "${YELLOW}Backing up to $BACKUP_DIR...${NC}"
+        run_cmd mkdir -p "$BACKUP_DIR"
+        BACKED_UP=true
+    fi
+    run_cmd cp "$HOME/.claude.json" "$BACKUP_DIR/.claude.json"
+    echo "  Backup: .claude.json"
+fi
+
 for file in "${FILES_TO_BACKUP[@]}"; do
     if [ -f "$CLAUDE_DIR/$file" ]; then
         if [ "$BACKED_UP" = false ]; then
@@ -73,7 +84,19 @@ done
 
 echo ""
 
-# 3. Install files
+# 3. Load .env if exists (for environment variable substitution)
+ENV_LOADED=false
+if [ -f "$SCRIPT_DIR/.env" ] && [ "$DRY_RUN" = false ]; then
+    echo -e "${BLUE}Loading environment variables from .env...${NC}"
+    set -a  # Auto-export all variables
+    source "$SCRIPT_DIR/.env"
+    set +a
+    ENV_LOADED=true
+    echo -e "  ${GREEN}Environment variables loaded${NC}"
+    echo ""
+fi
+
+# 4. Install files
 echo -e "${BLUE}Installing files...${NC}"
 
 run_cmd cp "$SCRIPT_DIR/global/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"
@@ -82,8 +105,58 @@ echo -e "  ${GREEN}CLAUDE.md${NC}"
 run_cmd cp "$SCRIPT_DIR/global/settings.json" "$CLAUDE_DIR/settings.json"
 echo -e "  ${GREEN}settings.json${NC}"
 
-run_cmd cp "$SCRIPT_DIR/global/mcp.json" "$CLAUDE_DIR/mcp.json"
-echo -e "  ${GREEN}mcp.json${NC}"
+# Install mcp.json as reference
+if [ "$DRY_RUN" = false ]; then
+    if [ "$ENV_LOADED" = true ] && command -v envsubst >/dev/null 2>&1; then
+        envsubst < "$SCRIPT_DIR/global/mcp.json" > "$CLAUDE_DIR/mcp.json"
+        echo -e "  ${GREEN}mcp.json${NC} (reference with env vars substituted)"
+    else
+        cp "$SCRIPT_DIR/global/mcp.json" "$CLAUDE_DIR/mcp.json"
+        echo -e "  ${GREEN}mcp.json${NC} (reference template)"
+    fi
+else
+    echo -e "  ${CYAN}[dry-run] install mcp.json${NC}"
+    echo -e "  ${GREEN}mcp.json${NC} (reference)"
+fi
+
+# Merge MCP servers into ~/.claude.json
+CLAUDE_JSON="$HOME/.claude.json"
+if [ "$DRY_RUN" = false ]; then
+    if [ -f "$CLAUDE_JSON" ] && command -v jq >/dev/null 2>&1; then
+        echo ""
+        echo -e "${BLUE}Merging MCP servers into .claude.json...${NC}"
+
+        # Create temp MCP config with env substitution
+        TEMP_MCP=$(mktemp)
+        if [ "$ENV_LOADED" = true ] && command -v envsubst >/dev/null 2>&1; then
+            envsubst < "$SCRIPT_DIR/global/mcp.json" > "$TEMP_MCP"
+        else
+            cp "$SCRIPT_DIR/global/mcp.json" "$TEMP_MCP"
+        fi
+
+        # Merge mcpServers section using jq
+        TEMP_JSON=$(mktemp)
+        jq -s '.[0] * {"mcpServers": (.[0].mcpServers + .[1].mcpServers)}' \
+            "$CLAUDE_JSON" "$TEMP_MCP" > "$TEMP_JSON"
+
+        if [ $? -eq 0 ]; then
+            mv "$TEMP_JSON" "$CLAUDE_JSON"
+            echo -e "  ${GREEN}MCP servers merged successfully${NC}"
+        else
+            echo -e "  ${YELLOW}Failed to merge - .claude.json unchanged${NC}"
+            rm -f "$TEMP_JSON"
+        fi
+
+        rm -f "$TEMP_MCP"
+    elif [ ! -f "$CLAUDE_JSON" ]; then
+        echo -e "  ${YELLOW}~/.claude.json not found - skipping MCP merge${NC}"
+    else
+        echo ""
+        echo -e "${YELLOW}⚠️  jq not installed - cannot merge MCPs into .claude.json${NC}"
+        echo -e "  Install jq: ${CYAN}sudo apt install jq${NC} (Ubuntu/Debian)"
+        echo -e "  Or manually copy MCPs from ~/.claude/mcp.json to ~/.claude.json"
+    fi
+fi
 
 # 4. Install directories (agents, rules)
 for dir in agents rules; do

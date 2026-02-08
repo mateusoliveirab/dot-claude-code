@@ -58,11 +58,11 @@ Skills can include supporting files (templates, examples, scripts) in their dire
 
 ### MCP Servers (`global/mcp.json`)
 
-| Server | Usage |
-|---|---|
-| **Chrome DevTools** | Validate UI changes, inspect elements, verify layout |
-| **Shadcn UI** | Add/lookup shadcn/ui components |
-| **Supabase** | Database operations, authentication and storage |
+| Server | Usage | Configuration |
+|---|---|---|
+| **Chrome DevTools** | Validate UI changes, inspect elements, verify layout | None required |
+| **Shadcn UI** | Add/lookup shadcn/ui components | None required |
+| **Supabase** | Database operations, authentication and storage | Requires `SUPABASE_ACCESS_TOKEN` (see setup below) |
 
 ### Extensibility
 
@@ -78,21 +78,72 @@ Base template for creating `CLAUDE.md` in new projects with sections for stack, 
 
 ## Installation
 
+### Prerequisites
+
+- **jq** — Required for merging MCP servers into your config
+  ```bash
+  # Ubuntu/Debian
+  sudo apt install jq
+
+  # macOS
+  brew install jq
+  ```
+
+### Install
+
 ```bash
-git clone <repo-url> && cd dot-claude-code
+git clone https://github.com/mateusoliveirab/dot-claude-code.git
+cd dot-claude-code
+
+# Optional: Configure your environment variables
+cp .env.example .env
+# Edit .env with your tokens (e.g., SUPABASE_ACCESS_TOKEN)
+
 bash install.sh
 ```
 
 The script will:
 1. Create `~/.claude/` if it doesn't exist
-2. Back up the previous setup to `~/.claude/backup-YYYYMMDD-HHMMSS/`
-3. Install `settings.json` and `mcp.json`
-4. Copy `agents/`, `skills/` and `rules/` directories to `~/.claude/`
-5. Show available skills and summary
+2. Back up existing config to `~/.claude/backup-YYYYMMDD-HHMMSS/` (including `~/.claude.json`)
+3. Load environment variables from `.env` (if exists)
+4. Install `CLAUDE.md`, `settings.json` to `~/.claude/`
+5. Install `mcp.json` as reference to `~/.claude/mcp.json`
+6. **Merge MCP servers** into `~/.claude.json` (with env vars substituted)
+7. Copy `agents/`, `skills/` and `rules/` directories to `~/.claude/`
 
-**Note**: `CLAUDE.md` is deprecated in this setup. If you have an existing one, it will be preserved but not overwritten. Consider migrating to modular rules in `~/.claude/rules/`.
+**Important**: Restart Claude Code after installation to load the new MCPs.
 
-Restart Claude Code after installation.
+**Note**: If `jq` is not installed, the script will skip MCP merging and show instructions for manual configuration.
+
+### Configuring Environment Variables
+
+Some MCP servers require authentication tokens. The install script automatically substitutes variables from `.env`:
+
+1. **Copy the example file**:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Add your tokens** (edit `.env`):
+   ```bash
+   # Supabase MCP - Get from: https://supabase.com/dashboard/account/tokens
+   SUPABASE_ACCESS_TOKEN=sbp_your_actual_token_here
+
+   # Add other MCP tokens as needed
+   # GITHUB_TOKEN=your_token_here
+   ```
+
+3. **Run install.sh**:
+   ```bash
+   bash install.sh
+   ```
+
+The script will:
+- Load all variables from `.env`
+- Substitute `${VARIABLE_NAME}` placeholders in `mcp.json`
+- Merge the configured MCPs into `~/.claude.json`
+
+**Note**: The `.env` file is gitignored for security. Use `.env.example` as a reference.
 
 ## Customization
 
