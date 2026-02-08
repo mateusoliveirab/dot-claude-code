@@ -17,3 +17,6 @@ Thumbs.db
 
 # Node
 node_modules/
+
+# Agent instructions (local only)
+AGENTS.md
