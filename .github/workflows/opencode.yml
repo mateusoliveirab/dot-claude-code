@@ -1,0 +1,70 @@
+name: opencode
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+
+jobs:
+  detect-model:
+    if: |
+      contains(github.event.comment.body, '/oc ') ||
+      contains(github.event.comment.body, '/opencode ')
+    runs-on: ubuntu-latest
+    outputs:
+      model: ${{ steps.model.outputs.model }}
+    steps:
+      - name: Detect model from comment
+        id: model
+        run: |
+          # Default: kimi-k2.5-free (best free coding model)
+          DEFAULT_MODEL="opencode/kimi-k2.5-free"
+          MODEL="$DEFAULT_MODEL"
+          
+          COMMENT='${{ github.event.comment.body }}'
+          
+          # Model tags (all free on OpenCode Zen):
+          # [kimi]     - Kimi K2.5 Free (default)
+          # [glm]      - GLM 5 Free
+          # [mm/minimax] - MiniMax M2.5 Free
+          # [pickle]   - Big Pickle (stealth model)
+          # [nano]     - GPT 5 Nano
+          
+          if echo "$COMMENT" | grep -qi '\[pickle\]\|\[bp\]'; then
+            MODEL="opencode/big-pickle"
+          elif echo "$COMMENT" | grep -qi '\[nano\]\|\[gpt\]'; then
+            MODEL="opencode/gpt-5-nano"
+          elif echo "$COMMENT" | grep -qi '\[kimi\]'; then
+            MODEL="opencode/kimi-k2.5-free"
+          elif echo "$COMMENT" | grep -qi '\[glm\]'; then
+            MODEL="opencode/glm-5-free"
+          elif echo "$COMMENT" | grep -qi '\[mm\]\|\[minimax\]'; then
+            MODEL="opencode/minimax-m2.5-free"
+          fi
+          
+          echo "Detected model: $MODEL"
+          echo "model=$MODEL" >> $GITHUB_OUTPUT
+
+  opencode:
+    needs: detect-model
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Run OpenCode
+        uses: anomalyco/opencode/github@latest
+        env:
+          OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          model: ${{ needs.detect-model.outputs.model }}
