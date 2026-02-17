@@ -1,7 +1,6 @@
 ---
 name: git-pr
 description: Prepare comprehensive PR content for manual creation. Use when analyzing branch changes, generating PR descriptions, or preparing to open a pull request.
-auto_invoke: false
 compatibility: Requires git, bash. Works with GitHub, GitLab, Bitbucket via web interface.
 metadata:
   author: User

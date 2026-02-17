@@ -1,7 +1,6 @@
 ---
 name: git-commit
 description: Create well-formatted commits using conventional commits. Groups related changes by functionality. Use when committing staged changes or preparing commits.
-auto_invoke: false
 compatibility: Requires git, bash. Works in any git repository.
 metadata:
   author: User
