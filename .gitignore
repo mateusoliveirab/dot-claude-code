@@ -3,8 +3,9 @@
 credentials.json
 secrets.json
 
-# Local backups
+# Temporary files
 backup-*/
+.claude/
 
 # OS
 .DS_Store
@@ -18,5 +19,5 @@ Thumbs.db
 # Node
 node_modules/
 
-# Agent instructions (local only)
+# Agent instructions (opencode local instructions)
 AGENTS.md
