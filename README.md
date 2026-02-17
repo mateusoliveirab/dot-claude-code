@@ -1,14 +1,9 @@
 # dot-claude-code-installation
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Stars](https://img.shields.io/github/stars/mateusoliveirab/dot-claude-code-installation)](https://github.com/mateusoliveirab/dot-claude-code-installation/stargazers)
 [![Last Commit](https://img.shields.io/github/last-commit/mateusoliveirab/dot-claude-code-installation)](https://github.com/mateusoliveirab/dot-claude-code-installation/commits/main)
-[![Repo Size](https://img.shields.io/github/repo-size/mateusoliveirab/dot-claude-code-installation)](https://github.com/mateusoliveirab/dot-claude-code-installation)
-[![Made with Bash](https://img.shields.io/badge/Made%20with-Bash-1f425f.svg?logo=gnubash&logoColor=white)](https://www.gnu.org/software/bash/)
-[![VS Code](https://img.shields.io/badge/VS%20Code-Development-007ACC?logo=visualstudiocode&logoColor=white)](https://code.visualstudio.com/)
-[![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?logo=ubuntu&logoColor=white)](https://ubuntu.com/)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Powered-d97757?logo=anthropic)](https://claude.com/claude-code)
-[![opencode](https://img.shields.io/badge/opencode-Powered-22c55e)](https://opencode.ai)
-[![Git](https://img.shields.io/badge/Git-Control-f05032?logo=git&logoColor=white)](https://git-scm.com/)
 
 My personal Claude Code setup — modular rules, reusable skills, MCP servers, and sane defaults. Versioned with git and easy to install.
 
