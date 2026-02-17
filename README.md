@@ -34,6 +34,7 @@ Reusable workflows invoked with `/command`:
 |-------|---------|--------------|
 | `git-commit` | `/git-commit` | Conventional commits, groups by functionality |
 | `git-pr` | `/git-pr` | Generate PR content (I open manually to review) |
+| `skill-creator` | `/skill-creator` | Create and audit skills with best practices and quality scoring |
 
 ### Settings (`global/settings.json`)
 - Thinking mode always on (use `/fast` for quick tasks)
@@ -77,7 +78,7 @@ paths: ["src/components/**/*"]
 - Prefer function components
 ```
 
-Create new skills by copying `templates/skill-template/`. Check `global/skills/` for examples.
+Create new skills with `/skill-creator` or by copying `templates/skill-template/`. Audit existing skills with `python scripts/audit_skill.py path/to/skill`.
 
 Edit `~/.claude/settings.json` to tweak permissions.
 
@@ -92,7 +93,8 @@ dot-claude-code-installation/
 │   ├── mcp.json          # MCP server configs
 │   ├── skills/           # Reusable workflows
 │   │   ├── git-commit/
-│   │   └── git-pr/
+│   │   ├── git-pr/
+│   │   └── skill-creator/
 │   └── rules/            # Topic-specific rules
 └── templates/
     └── skill-template/   # Copy this for new skills
