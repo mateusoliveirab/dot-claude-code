@@ -21,3 +21,7 @@ node_modules/
 
 # Agent instructions (opencode local instructions)
 AGENTS.md
+
+# Python
+__pycache__/
+*.pyc
