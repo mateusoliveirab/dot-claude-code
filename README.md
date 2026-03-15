@@ -39,6 +39,7 @@ Reusable workflows invoked with `/command`:
 | `git-pr` | `/git-pr` | Generate PR content (I open manually to review) |
 | `skill-creator` | `/skill-creator` | Create and audit skills with best practices and quality scoring |
 | `opencode-task-splitter` | `/opencode-task-splitter` | Split large tasks into parallel OpenCode subtasks with model routing |
+| `cf-crawl` | `/cf-crawl` | Crawl websites via Cloudflare Browser Rendering API and save as markdown |
 
 ### Settings (`global/settings.json`)
 - Thinking mode always on (use `/fast` for quick tasks)
@@ -69,6 +70,7 @@ The script installs everything to `~/.claude/` and backs up existing configs. Re
 **Needs:**
 - `jq` for MCP merging (`sudo apt install jq` or `brew install jq`)
 - `opencode` CLI for the task-splitter skill (`npm i -g opencode-ai`)
+- `CLOUDFLARE_ACCOUNT_ID` + `CLOUDFLARE_API_TOKEN` for the `cf-crawl` skill (see `.env.example`)
 
 ## Customizing
 
@@ -101,7 +103,8 @@ dot-claude-code-installation/
 │   │   ├── git-commit/
 │   │   ├── git-pr/
 │   │   ├── skill-creator/
-│   │   └── opencode-task-splitter/
+│   │   ├── opencode-task-splitter/
+│   │   └── cf-crawl/
 │   └── rules/            # Topic-specific rules
 └── templates/
     └── skill-template/   # Copy this for new skills
