@@ -1,8 +1,6 @@
 # dot-claude-code-installation
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Stars](https://img.shields.io/github/stars/mateusoliveirab/dot-claude-code-installation)](https://github.com/mateusoliveirab/dot-claude-code-installation/stargazers)
-[![Last Commit](https://img.shields.io/github/last-commit/mateusoliveirab/dot-claude-code-installation)](https://github.com/mateusoliveirab/dot-claude-code-installation/commits/main)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Powered-d97757?logo=anthropic)](https://claude.com/claude-code)
 
 My personal Claude Code setup — modular rules, reusable skills, MCP servers, and sane defaults. Versioned with git and easy to install.
@@ -35,6 +33,7 @@ Reusable workflows invoked with `/command`:
 | `git-commit` | `/git-commit` | Conventional commits, groups by functionality |
 | `git-pr` | `/git-pr` | Generate PR content (I open manually to review) |
 | `skill-creator` | `/skill-creator` | Create and audit skills with best practices and quality scoring |
+| `opencode-task-splitter` | `/opencode-task-splitter` | Split large tasks into parallel OpenCode subtasks with model routing |
 
 ### Settings (`global/settings.json`)
 - Thinking mode always on (use `/fast` for quick tasks)
@@ -43,8 +42,8 @@ Reusable workflows invoked with `/command`:
 
 ### MCP Servers (`global/mcp.json`)
 Pre-configured servers:
-- **Chrome DevTools** — UI validation
-- **Shadcn UI** — Component lookup
+- **Chrome DevTools** — UI validation, inspect elements, verify layout
+- **Shadcn UI** — Component lookup (`npx shadcn@latest add <component>`)
 - **Supabase** — DB operations (needs `SUPABASE_ACCESS_TOKEN`)
 
 ## Quick Start
@@ -62,7 +61,9 @@ bash install.sh
 
 The script installs everything to `~/.claude/` and backs up existing configs. Restart Claude Code after install.
 
-**Needs:** `jq` for MCP merging (`sudo apt install jq` or `brew install jq`)
+**Needs:**
+- `jq` for MCP merging (`sudo apt install jq` or `brew install jq`)
+- `opencode` CLI for the task-splitter skill (`npm i -g opencode-ai`)
 
 ## Customizing
 
@@ -94,7 +95,8 @@ dot-claude-code-installation/
 │   ├── skills/           # Reusable workflows
 │   │   ├── git-commit/
 │   │   ├── git-pr/
-│   │   └── skill-creator/
+│   │   ├── skill-creator/
+│   │   └── opencode-task-splitter/
 │   └── rules/            # Topic-specific rules
 └── templates/
     └── skill-template/   # Copy this for new skills
