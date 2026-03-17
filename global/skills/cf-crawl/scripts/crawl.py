@@ -77,7 +77,7 @@ def slugify(url_str):
 def save_page(page, output_dir, seen_slugs):
     """Save a single page as a markdown file."""
     url = page.get("url", "")
-    content = page.get("content", page.get("markdown", "")).strip()
+    content = page.get("markdown", page.get("content", page.get("html", ""))).strip()
     crawled_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     slug = slugify(url)
@@ -95,7 +95,7 @@ def save_page(page, output_dir, seen_slugs):
     return filepath
 
 
-def run_crawl(url, limit, depth, output_dir_str, no_verify=False):
+def run_crawl(url, limit, depth, output_dir_str, no_verify=False, no_render=False):
     account_id, api_token = get_credentials()
     if not account_id or not api_token:
         print("ERROR: missing credentials — run: python crawl.py check-env", file=sys.stderr)
@@ -111,8 +111,10 @@ def run_crawl(url, limit, depth, output_dir_str, no_verify=False):
         "depth": depth,
         "formats": ["markdown"],
     }
+    if no_render:
+        payload["render"] = False
 
-    print(f"Starting crawl: {url} (limit={limit}, depth={depth})")
+    print(f"Starting crawl: {url} (limit={limit}, depth={depth}{', render=false' if no_render else ''})")
 
     # Start job
     verify = not no_verify
@@ -129,16 +131,14 @@ def run_crawl(url, limit, depth, output_dir_str, no_verify=False):
     if isinstance(result, dict):
         inner = result.get("result")
         if isinstance(inner, list):
-            # Sync response with pages list
             pages = inner
         elif isinstance(inner, str):
-            # Async job — result is the job ID string
+            # Job ID returned as a plain string
             job_id = inner
             poll_url = CF_BASE.format(account_id=account_id) + f"/crawl/{job_id}"
             print(f"Job started: {job_id}")
             pages = poll_job(poll_url, api_token, verify)
         elif isinstance(inner, dict) and "id" in inner:
-            # Async job — result is an object with id
             job_id = inner["id"]
             poll_url = CF_BASE.format(account_id=account_id) + f"/crawl/{job_id}"
             print(f"Job started: {job_id}")
@@ -172,21 +172,40 @@ def run_crawl(url, limit, depth, output_dir_str, no_verify=False):
         print(f"  {f}")
 
 
+TERMINAL_STATUSES = {
+    "cancelled_due_to_limits":   "Job cancelled — account hit browser time limit (Workers Free: 10 min/day).\nFix: use --no-render for static sites, or upgrade to Workers Paid plan.",
+    "cancelled_due_to_timeout":  "Job cancelled — exceeded 7-day runtime limit.",
+    "cancelled_by_user":         "Job cancelled by user.",
+    "disallowed":                "Job blocked — target site's robots.txt disallows crawling.",
+    "errored":                   "Job errored on the Cloudflare side.",
+    "failed":                    "Job failed.",
+    "error":                     "Job failed.",
+}
+
+
 def poll_job(poll_url, api_token, verify_ssl=True):
-    """Poll a crawl job until it completes, returning the pages list."""
+    """Poll a crawl job until it completes, returning the pages list.
+
+    Uses ?limit=1 while running to avoid downloading full payload on every poll,
+    then fetches the complete result once status is 'completed'.
+    """
+    poll_status_url = poll_url + "?limit=1"
     while True:
-        result = api_request("GET", poll_url, api_token, verify_ssl=verify_ssl)
+        result = api_request("GET", poll_status_url, api_token, verify_ssl=verify_ssl)
         data = result.get("result", result)
         status = data.get("status", "")
         finished = data.get("finished", 0)
         total = data.get("total", "?")
 
-        if status in ("complete", "completed", "done"):
-            records = data.get("records", data.get("pages", data.get("results", [])))
+        if status == "completed":
+            # Fetch full result now that job is done
+            full_result = api_request("GET", poll_url, api_token, verify_ssl=verify_ssl)
+            full_data = full_result.get("result", full_result)
+            records = full_data.get("records", full_data.get("pages", full_data.get("results", [])))
             print(f"Done. {len(records)} pages crawled.")
             return records
-        elif status in ("failed", "error"):
-            print(f"Job failed: {data}", file=sys.stderr)
+        elif status in TERMINAL_STATUSES:
+            print(f"ERROR: {TERMINAL_STATUSES[status]}", file=sys.stderr)
             sys.exit(1)
         else:
             pct = f"{int(finished / total * 100)}%" if isinstance(total, int) and total > 0 else "..."
@@ -208,13 +227,14 @@ def main():
     crawl_parser.add_argument("--depth", type=int, default=3)
     crawl_parser.add_argument("--output", default="./crawl-output")
     crawl_parser.add_argument("--no-verify", action="store_true", help="Disable SSL verification")
+    crawl_parser.add_argument("--no-render", action="store_true", help="Skip JS rendering (faster, saves browser time — use for static sites)")
 
     args = parser.parse_args()
 
     if args.command == "check-env":
         check_env()
     elif args.command == "crawl":
-        run_crawl(args.url, args.limit, args.depth, args.output, no_verify=args.no_verify)
+        run_crawl(args.url, args.limit, args.depth, args.output, no_verify=args.no_verify, no_render=args.no_render)
     else:
         parser.print_help()
         sys.exit(1)
