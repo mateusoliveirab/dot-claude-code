@@ -1,0 +1,9 @@
+superpowers@claude-plugins-official
+claude-code-setup@claude-plugins-official
+claude-md-management@claude-plugins-official
+code-review@claude-plugins-official
+code-simplifier@claude-plugins-official
+feature-dev@claude-plugins-official
+frontend-design@claude-plugins-official
+gitlab@claude-plugins-official
+terraform-provider-development@hashicorp
