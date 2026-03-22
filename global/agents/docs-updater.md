@@ -95,11 +95,35 @@ If the file does not exist, this is the first run: set `last_run = null`, `ignor
 }
 ```
 
-### Step 1 — Determine scope (diff-driven)
+### Step 1 — Discover scope
 
-Filter out any files or subprojects listed in the `ignore` array before processing.
+**Always run — regardless of `last_run`.**
 
-If `last_run` is set, limit the audit to files that changed since then:
+#### 1a — Canonical doc discovery
+
+Use the shared script as the source of truth for all tracked documentation files. Never use `find` or directory listings — they include untracked and build-artifact paths.
+
+```bash
+bash agents/scripts/discover-docs.sh
+```
+
+This gives the complete list of documentation files that exist. Use it as your audit checklist.
+
+> Do not rely on the root `CLAUDE.md` to know what subprojects exist. The root CLAUDE.md may be outdated — and correcting it is part of this audit. `git ls-files` is the canonical source.
+
+#### 1b — Stack discovery (undocumented subprojects)
+
+Find all directories that contain a stack indicator file but have no `README.md`:
+
+```bash
+bash agents/scripts/discover-stacks.sh
+```
+
+Each line in the output is an **undocumented stack** — add a new `README.md` for it to the audit scope. Empty output means all stacks are documented.
+
+#### 1c — Diff-driven prioritization (subsequent runs only)
+
+If `last_run` is set, identify files changed since then — these are audited first:
 
 ```bash
 # Files changed since last run
@@ -109,19 +133,11 @@ git log --since="<last_run>" --name-only --pretty=format: | sort -u | grep -E "(
 git log --since="<last_run>" --grep="BREAKING CHANGE" --oneline
 ```
 
-If `last_run` is null (first run), discover all documentation files:
+Changed files take priority. All files from steps 1a and 1b remain in scope but at lower priority.
 
-```bash
-find . \( -name "README.md" -o -name "CLAUDE.md" \) \
-  -not -path "*/node_modules/*" \
-  -not -path "*/.next/*" \
-  -not -path "*/dist/*" \
-  -not -path "*/build/*" \
-  -not -path "*/.venv/*" \
-  -not -path "*/__pycache__/*"
-```
+#### 1d — Apply ignore list
 
-Then read the root `CLAUDE.md` and extract the `Repository Structure` section. Cross-reference: if a subproject is listed there but has no `README.md`, that is a documentation gap.
+Remove any file or subproject listed in the `ignore` array from the final scope before proceeding.
 
 ### Step 2 — Revisit backlog
 
