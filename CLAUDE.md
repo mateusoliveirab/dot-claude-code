@@ -91,3 +91,4 @@ Before submitting: `bash -n install.sh` passes, `bash install.sh --dry-run` succ
 ## Git
 
 Use `git` CLI (not `gh`). Follow conventional commit style. Use `/git-commit` and `/git-pr` skills.
+Branch naming: `feat/`, `fix/`, `chore/`, `docs/` prefixes matching the commit type.

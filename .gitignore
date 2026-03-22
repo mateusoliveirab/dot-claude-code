@@ -1,3 +1,6 @@
+# Personal local preferences
+CLAUDE.local.md
+
 # Credentials and secrets
 .env
 credentials.json
