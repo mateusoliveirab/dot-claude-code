@@ -222,6 +222,31 @@ When designing a new agent, answer these questions first:
 6. **What are its hard boundaries?** List the things it must never do.
 7. **How does it integrate with daily-briefing?** What goes into the escalation array?
 
+### Research phase — before writing a single line
+
+Before designing the workflow, research what the community is already doing in this domain:
+
+- Search for open-source tools, GitHub Actions, CLI utilities, and agent frameworks that solve similar problems
+- Look at how teams at companies like GitHub, Stripe, Shopify, and Netflix approach the same domain (engineering blogs, conference talks, OSS repos)
+- Check CNCF, OWASP, and similar foundations for established standards and tooling
+- Search for "awesome-<domain>" lists on GitHub
+
+**How to evaluate what you find — Quality Score:**
+
+Score each practice or tool on 5 dimensions (1–3 each, max 15):
+
+| Dimension | 1 | 2 | 3 |
+|---|---|---|---|
+| **Adoption** | Personal project / unknown | Mid-size team or company | Industry standard (CNCF, OWASP, Fortune 500) |
+| **Maintenance** | Abandoned / last commit >2y | Active but slow | Actively maintained, recent releases |
+| **Fit** | Tangentially related | Solves part of the problem | Directly addresses the agent's domain |
+| **Autonomy-friendly** | Requires interactive input | Partially automatable | Fully scriptable, JSON output, CI-native |
+| **Signal quality** | High false positive rate | Moderate noise | Low noise, high precision |
+
+**Threshold:** Score ≥ 10 → include as primary tool. Score 7–9 → include as fallback. Score < 7 → skip.
+
+This is how we decided on Gitleaks over grep, Semgrep over manual pattern matching, and Checkov over ad-hoc terraform linting — each scored 12–14 vs 5–7 for the alternatives.
+
 A new agent is production-ready when:
 - It has a state file with `last_run`, `ignore`, `backlog`, `escalation`
 - Its autonomy tiers are explicitly documented
