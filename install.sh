@@ -363,6 +363,28 @@ if [ -f "$PLUGINS_FILE" ] && command -v claude >/dev/null 2>&1; then
     echo ""
 fi
 
+# Tools
+echo "  Tools"
+echo "$DIV"
+if ! command -v rtk >/dev/null 2>&1; then
+    printf "  ${GREEN}+${NC}  rtk  "
+    if curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh >/dev/null 2>&1; then
+        printf "${GREEN}installed${NC}\n"
+        printf "\n"
+        printf "  ${CYAN}rtk${NC} — token-saving proxy for Claude Code bash commands\n"
+        printf "  ${GRAY}Next steps:${NC}\n"
+        printf "  ${GRAY}  1.${NC} Activate the auto-rewrite hook:  ${CYAN}rtk init --global${NC}\n"
+        printf "  ${GRAY}  2.${NC} Check token savings anytime:     ${CYAN}rtk gain${NC}\n"
+        printf "  ${GRAY}  After init, all bash commands are transparently rewritten — no extra steps.${NC}\n"
+    else
+        printf "${YELLOW}failed${NC}\n"
+        printf "  ${GRAY}Run manually:${NC} curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh\n"
+    fi
+else
+    printf "  ${GRAY}✓${NC}  rtk\n"
+fi
+echo ""
+
 # Skills list
 echo "  Skills"
 echo "$DIV"
