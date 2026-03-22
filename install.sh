@@ -334,6 +334,35 @@ if [ ${#PROMOTED_LABELS[@]} -gt 0 ]; then
     echo ""
 fi
 
+# Plugins
+PLUGINS_FILE="$SCRIPT_DIR/global/plugins.txt"
+if [ -f "$PLUGINS_FILE" ] && command -v claude >/dev/null 2>&1; then
+    INSTALLED_PLUGINS_JSON="$CLAUDE_DIR/plugins/installed_plugins.json"
+    STAT_PLUGINS_NEW=0
+    STAT_PLUGINS_SKIP=0
+
+    echo "  Plugins"
+    echo "$DIV"
+    while IFS= read -r plugin || [ -n "$plugin" ]; do
+        [[ -z "$plugin" || "$plugin" == \#* ]] && continue
+        # Check if already installed
+        if [ -f "$INSTALLED_PLUGINS_JSON" ] && command -v jq >/dev/null 2>&1 \
+            && jq -e --arg p "$plugin" '.plugins[$p]' "$INSTALLED_PLUGINS_JSON" >/dev/null 2>&1; then
+            printf "  ${GRAY}✓${NC}  %s\n" "$plugin"
+            STAT_PLUGINS_SKIP=$((STAT_PLUGINS_SKIP + 1))
+        else
+            printf "  ${GREEN}+${NC}  %s  " "$plugin"
+            if claude plugin install "$plugin" --scope user >/dev/null 2>&1; then
+                printf "${GREEN}installed${NC}\n"
+                STAT_PLUGINS_NEW=$((STAT_PLUGINS_NEW + 1))
+            else
+                printf "${YELLOW}failed — run: claude plugin install %s${NC}\n" "$plugin"
+            fi
+        fi
+    done < "$PLUGINS_FILE"
+    echo ""
+fi
+
 # Skills list
 echo "  Skills"
 echo "$DIV"
