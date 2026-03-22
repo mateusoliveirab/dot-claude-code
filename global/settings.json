@@ -140,6 +140,25 @@
           }
         ]
       }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // empty' | (read -r f && { [[ \"$f\" == *.sh ]] || exit 0; bash -n \"$f\"; }) 2>/dev/null",
+            "timeout": 10,
+            "statusMessage": "Checking shell syntax..."
+          },
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // empty' | (read -r f && { [[ \"$f\" == *.json ]] || exit 0; jq empty \"$f\"; }) 2>/dev/null",
+            "timeout": 10,
+            "statusMessage": "Validating JSON..."
+          }
+        ]
+      }
     ]
   }
 }
