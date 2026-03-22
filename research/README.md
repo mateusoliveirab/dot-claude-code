@@ -30,3 +30,10 @@ Reference material and notes for the dot-claude-code project.
 | `third-party-integrations.md` | Third-party integrations |
 | `terminal-config.md` | Terminal configuration |
 | `changelog.md` | Claude Code changelog |
+| `rtk-token-killer.md` | RTK CLI proxy — token compression for AI coding sessions (60–90% reduction) |
+| `headless-programmatic.md` | Run Claude Code programmatically via Agent SDK / `-p` flag (CI/CD, scripts) |
+| `scheduled-tasks.md` | Session-scoped cron: `/loop`, `CronCreate`, one-time reminders |
+| `channels.md` | Push events into running session (Telegram, Discord, webhook receivers) |
+| `hooks-guide.md` | Practical hooks guide: common use cases, exit codes, matchers, troubleshooting |
+| `agent-teams.md` | Orchestrate multiple Claude Code sessions as a coordinated team |
+| `sub-agents-guide.md` | Comprehensive subagent creation guide (frontmatter, tools, memory, examples) |
