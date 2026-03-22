@@ -15,6 +15,7 @@ for arg in "$@"; do
 done
 
 GREEN='\033[0;32m'
+RED='\033[0;31m'
 YELLOW='\033[1;33m'
 CYAN='\033[0;36m'
 GRAY='\033[0;90m'
@@ -118,28 +119,97 @@ dir_row() {
     fi
 }
 
+# ── Diff helpers ──────────────────────────────────────────────
+
+colored_diff() {
+    local repo_file="$1" local_file="$2"
+    local diffout
+    diffout=$(diff -u "$local_file" "$repo_file" 2>/dev/null) || true
+    # Non-empty output that doesn't start with "---" means binary or error
+    [[ -n "$diffout" ]] && [[ "${diffout:0:3}" != "---" ]] && {
+        printf "  ${GRAY}(binary file — skipped)${NC}\n"; return
+    }
+    printf '%s\n' "$diffout" | while IFS= read -r line; do
+        case "$line" in
+            +++*|---*) printf "  ${GRAY}%s${NC}\n" "$line" ;;
+            @@*)       printf "  ${CYAN}%s${NC}\n" "$line" ;;
+            +*)        printf "  ${GREEN}%s${NC}\n" "$line" ;;
+            -*)        printf "  ${RED}%s${NC}\n" "$line" ;;
+            *)         printf "  %s\n" "$line" ;;
+        esac
+    done
+}
+
+colored_diff_dir() {
+    # Strip trailing slashes to avoid double-slash in rel stripping
+    local repo_dir="${1%/}" local_dir="${2%/}"
+    while IFS= read -r -d $'\0' file; do
+        local rel="${file#"$repo_dir"/}"
+        [[ "$rel" == ".gitkeep" ]] && continue
+        local local_file="$local_dir/$rel"
+        if [ ! -f "$local_file" ]; then
+            printf "  ${GREEN}+ %s${NC} ${GRAY}(new)${NC}\n" "$rel"
+        elif ! diff -q "$file" "$local_file" >/dev/null 2>&1; then
+            printf "  ${GRAY}── %s ──${NC}\n" "$rel"
+            colored_diff "$file" "$local_file"
+        fi
+    done < <(find "$repo_dir" -type f -not -path '*/.git/*' -print0)
+    [ -d "$local_dir" ] && while IFS= read -r -d $'\0' file; do
+        local rel="${file#"$local_dir"/}"
+        [[ "$rel" == ".gitkeep" ]] && continue
+        [ -f "$repo_dir/$rel" ] || printf "  ${RED}- %s${NC} ${GRAY}(not in repo)${NC}\n" "$rel"
+    done < <(find "$local_dir" -type f -not -path '*/.git/*' -print0)
+}
+
 # ── Phase 1: Scan & Preview ───────────────────────────────────
 
 printf "${BOLD}dot-claude-code${NC}  ${GRAY}→ ~/.claude${NC}\n"
 echo ""
+_src_parts=()
+for _item in "$SCRIPT_DIR/global/"*; do
+    [ -f "$_item" ] && _src_parts+=("$(basename "$_item")")
+done
+for _item in "$SCRIPT_DIR/global/"/*/; do
+    [ -d "$_item" ] && _src_parts+=("$(basename "$_item")/")
+done
+_src_list=$(IFS=; printf '%s' "${_src_parts[*]/#/ · }"); _src_list="${_src_list# · }"
+printf "  ${GRAY}source:${NC}   global/  ·  %s\n" "$_src_list"
+printf "  ${GRAY}promote:${NC}  choose ${CYAN}(P)${NC} at conflicts → copies ~/.claude/<file> back to global/<file> → commit\n"
+echo ""
 
 echo "  Files"
 echo "$DIV"
-scan_file "$SCRIPT_DIR/global/CLAUDE.md"     "$CLAUDE_DIR/CLAUDE.md"     "CLAUDE.md"
-scan_file "$SCRIPT_DIR/global/settings.json" "$CLAUDE_DIR/settings.json" "settings.json"
-scan_file "$SCRIPT_DIR/global/mcp.json"      "$CLAUDE_DIR/mcp.json"      "mcp.json"
+for _f in "$SCRIPT_DIR/global/"*; do
+    [ -f "$_f" ] || continue
+    _fname=$(basename "$_f")
+    [[ "$_fname" == "plugins.txt" ]] && continue  # handled separately
+    scan_file "$_f" "$CLAUDE_DIR/$_fname" "$_fname"
+done
 echo ""
 
-scan_dir "$SCRIPT_DIR/global/agents" "$CLAUDE_DIR/agents" "agents"
-A_MOD=$_MOD; A_UNCH=$_UNCH; A_ORP=$_ORP
+TOTAL_ORPHANS=0
+DIR_NAMES=(); DIR_CHANGED=(); DIR_UNCH=(); DIR_LABELS=()
 
-scan_dir "$SCRIPT_DIR/global/rules" "$CLAUDE_DIR/rules" "rules"
-R_MOD=$_MOD; R_UNCH=$_UNCH; R_ORP=$_ORP
-
-scan_skills "$SCRIPT_DIR/global/skills" "$CLAUDE_DIR/skills"
-S_MOD=$_MOD; S_UNCH=$_UNCH; S_ORP=$_ORP
-
-TOTAL_ORPHANS=$((A_ORP + R_ORP + S_ORP))
+for _d in "$SCRIPT_DIR/global/"/*/; do
+    [ -d "$_d" ] || continue
+    _dname=$(basename "$_d")
+    if [[ "$_dname" == "skills" ]]; then
+        scan_skills "$_d" "$CLAUDE_DIR/$_dname"
+        _label=""
+        for _n in "${SKILLS_MOD_NAMES[@]}"; do
+            [ -n "$_label" ] && _label+=" · "; _label+="$_n"
+        done
+        DIR_LABELS+=("$_label")
+        TOTAL_ORPHANS=$((TOTAL_ORPHANS + _ORP))
+    else
+        scan_dir "$_d" "$CLAUDE_DIR/$_dname" "$_dname"
+        DIR_LABELS+=("")
+        TOTAL_ORPHANS=$((TOTAL_ORPHANS + _ORP))
+    fi
+    DIR_NAMES+=("$_dname/")
+    DIR_CHANGED+=($((_MOD + _ORP)))
+    DIR_UNCH+=("$_UNCH")
+done
 
 if [ $TOTAL_ORPHANS -gt 0 ]; then
     printf "  Directories  ${GRAY}·  %d untracked orphans${NC}\n" "$TOTAL_ORPHANS"
@@ -147,18 +217,9 @@ else
     echo "  Directories"
 fi
 echo "$DIV"
-dir_row "agents/"  $((A_MOD + A_ORP)) "$A_UNCH"
-dir_row "rules/"   $((R_MOD + R_ORP)) "$R_UNCH"
-if [ ${#SKILLS_MOD_NAMES[@]} -gt 0 ]; then
-    skill_list=""
-    for name in "${SKILLS_MOD_NAMES[@]}"; do
-        [ -n "$skill_list" ] && skill_list+=" · "
-        skill_list+="$name"
-    done
-    dir_row "skills/" $((S_MOD + S_ORP)) "$S_UNCH" "$skill_list"
-else
-    dir_row "skills/" 0 "$S_UNCH"
-fi
+for _i in "${!DIR_NAMES[@]}"; do
+    dir_row "${DIR_NAMES[$_i]}" "${DIR_CHANGED[$_i]}" "${DIR_UNCH[$_i]}" "${DIR_LABELS[$_i]}"
+done
 echo ""
 
 # Nothing to do?
@@ -193,7 +254,17 @@ if [ ${#DECIDE_LABELS[@]} -gt 0 ] && [ "$AUTO_YES" = false ]; then
             done
             ;;
         P|p)
-            for i in "${!DECIDE_LABELS[@]}"; do DECIDE_CHOICES[$i]="p"; done
+            _promote_total=${#DECIDE_LABELS[@]}
+            printf "\n  ${YELLOW}promote all writes %d item(s) back to the source repo.${NC}\n" "$_promote_total"
+            printf "  ${GRAY}Type the count to confirm:${NC} "
+            read -r _confirm_count
+            echo ""
+            if [[ "$_confirm_count" =~ ^[0-9]+$ ]] && [[ "$_confirm_count" -eq "$_promote_total" ]]; then
+                for i in "${!DECIDE_LABELS[@]}"; do DECIDE_CHOICES[$i]="p"; done
+            else
+                printf "${GRAY}aborted.${NC}\n"
+                exit 1
+            fi
             ;;
         M|m)
             echo "$DIV"
@@ -204,6 +275,13 @@ if [ ${#DECIDE_LABELS[@]} -gt 0 ] && [ "$AUTO_YES" = false ]; then
                 printf "  ${BOLD}[%d/%d]${NC} %s\n" "$((i+1))" "$total" "$label"
                 case "$type" in
                     modified|modified_dir)
+                        echo "$DIV"
+                        if [[ "$type" == "modified_dir" ]]; then
+                            colored_diff_dir "${DECIDE_SRCS[$i]}" "${DECIDE_TGTS[$i]}"
+                        else
+                            colored_diff "${DECIDE_SRCS[$i]}" "${DECIDE_TGTS[$i]}"
+                        fi
+                        echo "$DIV"
                         printf "         ${CYAN}(r)${NC} replace  ${CYAN}(k)${NC} keep  ${CYAN}(p)${NC} promote  ${CYAN}→${NC} "
                         read -r choice
                         case "$choice" in
@@ -244,12 +322,17 @@ ensure_backup() {
     fi
 }
 
-[ -f "$HOME/.claude.json" ]        && { ensure_backup; cp "$HOME/.claude.json" "$BACKUP_DIR/.claude.json"; }
-[ -f "$CLAUDE_DIR/CLAUDE.md" ]     && { ensure_backup; cp "$CLAUDE_DIR/CLAUDE.md" "$BACKUP_DIR/CLAUDE.md"; }
-[ -f "$CLAUDE_DIR/settings.json" ] && { ensure_backup; cp "$CLAUDE_DIR/settings.json" "$BACKUP_DIR/settings.json"; }
-[ -f "$CLAUDE_DIR/mcp.json" ]      && { ensure_backup; cp "$CLAUDE_DIR/mcp.json" "$BACKUP_DIR/mcp.json"; }
-for dir in agents skills rules; do
-    [ -d "$CLAUDE_DIR/$dir" ] && [ "$(ls -A "$CLAUDE_DIR/$dir" 2>/dev/null)" ] && { ensure_backup; cp -r "$CLAUDE_DIR/$dir" "$BACKUP_DIR/$dir"; }
+[ -f "$HOME/.claude.json" ] && { ensure_backup; cp "$HOME/.claude.json" "$BACKUP_DIR/.claude.json"; }
+for _f in "$SCRIPT_DIR/global/"*; do
+    [ -f "$_f" ] || continue
+    _fname=$(basename "$_f")
+    [[ "$_fname" == "plugins.txt" ]] && continue
+    [ -f "$CLAUDE_DIR/$_fname" ] && { ensure_backup; cp "$CLAUDE_DIR/$_fname" "$BACKUP_DIR/$_fname"; }
+done
+for _d in "$SCRIPT_DIR/global/"/*/; do
+    [ -d "$_d" ] || continue
+    _dname=$(basename "$_d")
+    [ -d "$CLAUDE_DIR/$_dname" ] && [ "$(ls -A "$CLAUDE_DIR/$_dname" 2>/dev/null)" ] && { ensure_backup; cp -r "$CLAUDE_DIR/$_dname" "$BACKUP_DIR/$_dname"; }
 done
 
 ENV_LOADED=false
