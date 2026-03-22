@@ -24,3 +24,5 @@ See `~/.claude/rules/` for detailed topic-specific rules:
 - `working-approach.md` — Fast mode usage, task execution
 - `mcp-usage.md` — MCP shortcuts and detailed usage
 - `auto-memory.md` — When/how to update MEMORY.md
+
+@RTK.md

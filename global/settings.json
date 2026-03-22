@@ -1,7 +1,24 @@
 {
-  "alwaysThinkingEnabled": true,
-  "promptSuggestionEnabled": false,
   "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "mcp__chrome-devtools__navigate_page",
+      "mcp__chrome-devtools__evaluate_script",
+      "mcp__chrome-devtools__take_snapshot",
+      "mcp__chrome-devtools__click",
+      "mcp__chrome-devtools__fill",
+      "mcp__chrome-devtools__take_screenshot",
+      "mcp__chrome-devtools__emulate",
+      "mcp__chrome-devtools__resize_page",
+      "mcp__chrome-devtools__wait_for",
+      "mcp__chrome-devtools__list_pages",
+      "mcp__chrome-devtools__new_page",
+      "mcp__shadcn-ui__get_component",
+      "Bash(npm run lint:*)",
+      "Bash(npx eslint:*)",
+      "Bash(pkill:*)"
+    ],
+    "defaultMode": "default",
     "alwaysAllow": [
       {
         "tool": "Read",
@@ -102,5 +119,24 @@
   "statusLine": {
     "type": "command",
     "command": "bash $HOME/.claude/statusline-command.sh"
+  },
+  "alwaysThinkingEnabled": true,
+  "effortLevel": "high",
+  "promptSuggestionEnabled": false,
+  "voiceEnabled": true,
+  "showThinkingSummaries": true,
+  "skipDangerousModePermissionPrompt": true,
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/rtk-rewrite.sh"
+          }
+        ]
+      }
+    ]
   }
 }
