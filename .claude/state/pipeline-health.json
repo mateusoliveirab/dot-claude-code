@@ -1,0 +1,95 @@
+{
+  "last_run": "2026-03-23T04:00:00Z",
+  "escalation_threshold_days": 3,
+  "baselines": {},
+  "ignore": [],
+  "backlog": [],
+  "escalation": [],
+  "_meta": {
+    "note": "First run — baselines not yet established. Workflow run data unavailable via current MCP toolset (no gh run list equivalent). Classification will activate from the second run onward. Commit-history signals collected this run:",
+    "signals_detected": [
+      {
+        "repo": "herocloudlab-agents",
+        "date": "2026-03-22",
+        "observation": "5 rapid CI-related commits fixing ANTHROPIC_API_KEY missing from workflow steps. Suggests auth/permissions instability in gcp-ci.yml, generate-aws-questions.yml, generate-gcp-questions.yml. Final commit indicates fixes landed — monitor next run.",
+        "commits": [
+          "fix(ci): add ANTHROPIC_API_KEY to 'Get priority certification' step",
+          "fix(config): make ANTHROPIC_API_KEY optional for non-API commands",
+          "feat(ci): classify Anthropic API errors and write failure summary on generation failure",
+          "feat(ci): surface Anthropic error type in step summary with billing link",
+          "feat(ci): add step summary with Anthropic error classification and billing link"
+        ]
+      },
+      {
+        "repo": "workbench",
+        "date": "2026-03-22",
+        "observation": "hatch-agent-docs-updater workflow had a non-fast-forward push failure. Fix committed same day (rebase before push). Monitor for recurrence.",
+        "commits": [
+          "fix(ci): hatch docs updater — rebase before push to avoid non-fast-forward"
+        ]
+      },
+      {
+        "repo": "singledrop-newsletter",
+        "date": "2026-03-15 to 2026-03-23",
+        "observation": "daily-monitor.yml appears healthy — scheduled commits from GitHub Action on 03-15, 03-17, 03-20. Past failures on 03-10, 03-13 were credential-related and removed. PR #9 merged successfully today (deps fix).",
+        "commits": [
+          "Update reports - 2026-03-20",
+          "Update reports - 2026-03-17",
+          "Update reports - 2026-03-15"
+        ]
+      },
+      {
+        "repo": "iac",
+        "date": "2026-02-07",
+        "observation": "Last commit was 2026-02-07 (44 days ago). Workflows aws.yml and cloudflare.yml likely dormant."
+      }
+    ],
+    "workflow_inventory": {
+      "workbench": [
+        "3d-bussines-model-gen.yml",
+        "dontmarkdown-deploy.yml",
+        "dontmarkdown-iac.yml",
+        "hatch-agent-developer.yml",
+        "hatch-agent-devops-engineer.yml",
+        "hatch-agent-docs-updater.yml",
+        "hatch-agent-researcher.yml",
+        "hatch-agent-reviewer.yml",
+        "hatch-backlog-task-runner.yml",
+        "hatch-deploy.yml",
+        "skelica-deploy.yml",
+        "skelica-iac.yml",
+        "statusline-deploy.yml",
+        "statusline-iac.yml"
+      ],
+      "herocloudlab-agents": [
+        "gcp-ci.yml",
+        "generate-aws-questions.yml",
+        "generate-gcp-questions.yml",
+        "opencode.yml",
+        "review-questions.yml",
+        "sync-to-supabase.yml",
+        "ui-tests.yml"
+      ],
+      "singledrop-newsletter": [
+        "daily-monitor.yml",
+        "image-generation.yml",
+        "opencode.yml"
+      ],
+      "herocloudlab": [
+        "terraform.yml"
+      ],
+      "kairoslist": [
+        "opencode.yml"
+      ],
+      "iac": [
+        "aws.yml",
+        "cloudflare.yml"
+      ],
+      "dot-claude-code": [
+        "claude-code-review.yml",
+        "claude.yml",
+        "opencode.yml"
+      ]
+    }
+  }
+}
