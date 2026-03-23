@@ -42,6 +42,10 @@ Resources are loaded only when needed, keeping context usage efficient.
 |-------|-------------|---------|
 | `git-commit` | Streamlined git commit workflow with validation | `/git-commit` |
 | `git-pr` | Prepare pull request content and analysis | `/git-pr` |
+| `adversarial-review` | Fresh-eyes code critique via subagent | `/adversarial-review` |
+| `careful` | On-demand safety guardrails for dangerous commands | `/careful` |
+| `freeze` | Restrict edits to a specific directory | `/freeze` |
+| `babysit-pr` | Monitor PR, retry CI, resolve conflicts | `/babysit-pr` |
 
 ## Using Skills
 

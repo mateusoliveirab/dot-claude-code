@@ -1,11 +1,6 @@
 ---
 name: skill-name
 description: Brief description of what this skill does and when to use it. Include specific keywords that help agents identify relevant tasks.
-auto_invoke: false
-compatibility: Optional - required tools, packages, or environment (e.g., "Requires git, node")
-metadata:
-  author: your-name
-  version: "1.0.0"
 ---
 
 # Skill Name
@@ -49,11 +44,12 @@ Use templates from [assets/](assets/) directory:
 - `assets/TEMPLATE.md` - Starting template
 - `assets/config-template.json` - Configuration example
 
-## Edge Cases
+## Gotchas
 
-- **Empty input**: Handle gracefully with clear error message
-- **Network unavailable**: Cache results or provide fallback
-- **Large datasets**: Process in batches
+> The highest-signal content in any skill. Build this up from real failure modes over time.
+
+- **Gotcha 1**: Description of a non-obvious failure mode and how to avoid it
+- **Gotcha 2**: Description of another common pitfall
 
 ## Safety Considerations
 

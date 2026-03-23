@@ -24,5 +24,7 @@ See `~/.claude/rules/` for detailed topic-specific rules:
 - `working-approach.md` — Fast mode usage, task execution
 - `mcp-usage.md` — MCP shortcuts and detailed usage
 - `auto-memory.md` — When/how to update MEMORY.md
+- `prompt-caching.md` — Avoid breaking prompt cache
+- `advanced-features.md` — Checkpointing, output styles, path-scoped rules
 
 @RTK.md
