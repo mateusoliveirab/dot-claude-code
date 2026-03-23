@@ -27,3 +27,8 @@ After editing any script or config file, always run validation before reporting 
 
 - Use fast mode (`/fast`) for simple tasks: code review, bug fixes, refactoring, small edits
 - Use thinking mode (default) for complex tasks: architecture decisions, new features, debugging, planning
+
+## Recovery
+
+- Use `Esc+Esc` or `/rewind` to restore code and/or conversation to a checkpoint after mistakes
+- Checkpoints are automatic — no manual save needed
