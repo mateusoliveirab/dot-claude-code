@@ -1,8 +1,13 @@
+---
+tracked_version: "2.1.76"
+last_updated: "2026-03-15"
+---
+
 # Claude Code — Built-in Commands Reference
 
 Complete reference for all built-in commands available in Claude Code.
 
-> **Version:** Based on Claude Code **v2.1.76** (crawled 2026-03-15). Run `claude --version` to check your installed version.
+> **Version:** Based on Claude Code **v2.1.76** (last updated 2026-03-15). Run `claude --version` to check your installed version.
 > Some commands depend on platform, plan, or environment — noted where applicable.
 
 Type `/` in any session to see all commands, or `/` followed by letras para filtrar.

@@ -1,0 +1,68 @@
+name: Refresh Commands Doc
+
+on:
+  schedule:
+    - cron: '0 8 * * *' # Daily at 8am UTC
+  workflow_dispatch:
+
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    outputs:
+      drift: ${{ steps.check.outputs.drift }}
+      latest: ${{ steps.check.outputs.latest }}
+      tracked: ${{ steps.check.outputs.tracked }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for version drift
+        id: check
+        run: |
+          LATEST=$(npm show @anthropic-ai/claude-code version 2>/dev/null)
+          TRACKED=$(grep 'tracked_version:' docs/claude-code-commands.md | head -1 | sed 's/.*tracked_version: *//' | tr -d '"')
+
+          echo "latest=$LATEST" >> "$GITHUB_OUTPUT"
+          echo "tracked=$TRACKED" >> "$GITHUB_OUTPUT"
+
+          if [ "$LATEST" != "$TRACKED" ]; then
+            echo "drift=true" >> "$GITHUB_OUTPUT"
+            echo "Version drift detected: $TRACKED → $LATEST"
+          else
+            echo "drift=false" >> "$GITHUB_OUTPUT"
+            echo "No drift: already at $TRACKED"
+          fi
+
+  update-docs:
+    needs: check-version
+    if: needs.check-version.outputs.drift == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Claude to update commands doc
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Claude Code version changed from ${{ needs.check-version.outputs.tracked }} to ${{ needs.check-version.outputs.latest }}.
+
+            Your task is to update docs/claude-code-commands.md if and only if slash commands changed.
+
+            Steps:
+            1. Read docs/claude-code-commands.md to understand current state.
+            2. Research what changed between v${{ needs.check-version.outputs.tracked }} and v${{ needs.check-version.outputs.latest }}:
+               - Run `npx @anthropic-ai/claude-code@${{ needs.check-version.outputs.latest }} --help` or check the npm changelog.
+               - Look for: new slash commands, removed commands, renamed commands, behavior/description changes.
+            3. If any commands changed (added, removed, renamed, or meaningfully different behavior):
+               - Update the relevant entries in docs/claude-code-commands.md.
+               - Keep the existing style (numbered, insight blockquotes, category sections).
+               - Update the version reference in the body: "Based on Claude Code **v${{ needs.check-version.outputs.latest }}**".
+            4. Regardless of whether commands changed, update the frontmatter:
+               - Set `tracked_version` to "${{ needs.check-version.outputs.latest }}"
+               - Set `last_updated` to today's date (YYYY-MM-DD)
+            5. Commit with message: "docs: refresh commands reference for Claude Code v${{ needs.check-version.outputs.latest }}"
+
+            Important: do not rewrite or paraphrase content that is still accurate. Only touch what actually changed.
