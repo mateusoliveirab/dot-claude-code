@@ -18,6 +18,9 @@ bash install.sh --dry-run
 # Audit a specific skill with scoring
 python global/skills/skill-creator/scripts/audit_skill.py global/skills/<skill-name>
 
+# Quick validate all skills
+python global/skills/skill-creator/scripts/quick_validate.py
+
 # Syntax check install script
 bash -n install.sh
 
@@ -35,11 +38,11 @@ jq empty global/mcp.json
   - `settings.json` — Permissions and preferences
   - `mcp.json` — MCP server configs (chrome-devtools, shadcn-ui, supabase)
   - `rules/` — Topic-specific rule files (auto-loaded by Claude Code)
-  - `skills/` — Reusable `/command` workflows (git-commit, git-pr, skill-creator, opencode-task-splitter)
+  - `skills/` — Reusable `/command` workflows (git-commit, git-pr, skill-creator, opencode-task-splitter, task-splitter, cf-crawl, adversarial-review, careful, freeze, babysit-pr, verify-dot-claude-code-repo)
   - `agents/` — Subagent definitions
 - `templates/` — Starter templates for project CLAUDE.md and new skills
-- `scripts/` — Validation and utility scripts
 - `docs/` — Design docs and feature plans
+- `research/` — Reference material and sources
 
 ### Skill Structure
 
