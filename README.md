@@ -1,4 +1,4 @@
-# dot-claude-code-installation
+# dot-claude-code
 
 <p align="center">
   <a href="https://opensource.org/licenses/MIT"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" /></a>
@@ -29,6 +29,8 @@ Topic-specific guidelines loaded automatically:
 | `dev-workflow.md` | Git workflow, commit preferences |
 | `mcp-usage.md` | MCP shortcuts and guidelines |
 | `auto-memory.md` | When to update MEMORY.md |
+| `prompt-caching.md` | Avoiding prompt cache invalidation |
+| `advanced-features.md` | Checkpointing, output styles, path-scoped rules |
 
 ### Skills (`global/skills/`)
 Reusable workflows invoked with `/command`:
@@ -39,7 +41,13 @@ Reusable workflows invoked with `/command`:
 | `git-pr` | `/git-pr` | Generate PR content (I open manually to review) |
 | `skill-creator` | `/skill-creator` | Create and audit skills with best practices and quality scoring |
 | `opencode-task-splitter` | `/opencode-task-splitter` | Split large tasks into parallel OpenCode subtasks with model routing |
+| `task-splitter` | `/task-splitter` | Split tasks across multiple AI CLI tools (opencode, gemini, codex, ollama) |
 | `cf-crawl` | `/cf-crawl` | Crawl websites via Cloudflare Browser Rendering API and save as markdown |
+| `adversarial-review` | `/adversarial-review` | Fresh-eyes code critique via subagent |
+| `careful` | `/careful` | On-demand safety guardrails for dangerous commands |
+| `freeze` | `/freeze` | Restrict edits to a specific directory |
+| `babysit-pr` | `/babysit-pr` | Monitor PR, retry CI, resolve conflicts |
+| `verify-dot-claude-code-repo` | `/verify-dot-claude-code-repo` | Run full validation checklist for this repo |
 
 ### Settings (`global/settings.json`)
 - Thinking mode always on (use `/fast` for quick tasks)
@@ -55,8 +63,8 @@ Pre-configured servers:
 ## Quick Start
 
 ```bash
-git clone https://github.com/mateusoliveirab/dot-claude-code-installation.git
-cd dot-claude-code-installation
+git clone https://github.com/mateusoliveirab/dot-claude-code.git
+cd dot-claude-code
 
 # Optional: set up env vars for MCPs
 cp .env.example .env
@@ -93,19 +101,29 @@ Edit `~/.claude/settings.json` to tweak permissions.
 ## Structure
 
 ```
-dot-claude-code-installation/
+dot-claude-code/
 ├── install.sh              # One-command install
 ├── global/
 │   ├── CLAUDE.md          # Core instructions
 │   ├── settings.json      # Permissions & preferences
 │   ├── mcp.json          # MCP server configs
+│   ├── plugins.txt        # Plugin list
 │   ├── skills/           # Reusable workflows
 │   │   ├── git-commit/
 │   │   ├── git-pr/
 │   │   ├── skill-creator/
 │   │   ├── opencode-task-splitter/
-│   │   └── cf-crawl/
-│   └── rules/            # Topic-specific rules
+│   │   ├── task-splitter/
+│   │   ├── cf-crawl/
+│   │   ├── adversarial-review/
+│   │   ├── careful/
+│   │   ├── freeze/
+│   │   ├── babysit-pr/
+│   │   └── verify-dot-claude-code-repo/
+│   ├── rules/            # Topic-specific rules
+│   └── agents/           # Subagent definitions
+├── docs/                 # Design docs and feature notes
+├── research/             # Reference material and sources
 └── templates/
     └── skill-template/   # Copy this for new skills
 ```
