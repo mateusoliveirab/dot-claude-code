@@ -14,7 +14,6 @@ This is a complete template for creating new skills following the Agent Skills s
    ---
    name: my-skill
    description: What this skill does and when to use it
-   auto_invoke: false
    ---
    ```
 
