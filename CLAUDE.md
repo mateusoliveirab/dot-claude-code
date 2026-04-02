@@ -34,11 +34,13 @@ jq empty global/mcp.json
   - `CLAUDE.md` — Minimal base instructions
   - `settings.json` — Permissions and preferences
   - `mcp.json` — MCP server configs (chrome-devtools, shadcn-ui, supabase)
+  - `plugins.txt` — Enabled plugins list
+  - `statusline-command.sh` — Shell statusline helper
   - `rules/` — Topic-specific rule files (auto-loaded by Claude Code)
   - `skills/` — Reusable `/command` workflows (git-commit, git-pr, skill-creator, opencode-task-splitter)
   - `agents/` — Subagent definitions
+    - `scripts/` — Utility scripts (discover-docs.sh, discover-stacks.sh)
 - `templates/` — Starter templates for project CLAUDE.md and new skills
-- `scripts/` — Validation and utility scripts
 - `docs/` — Design docs and feature plans
 
 ### Skill Structure
