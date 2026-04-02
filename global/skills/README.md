@@ -42,10 +42,15 @@ Resources are loaded only when needed, keeping context usage efficient.
 |-------|-------------|---------|
 | `git-commit` | Streamlined git commit workflow with validation | `/git-commit` |
 | `git-pr` | Prepare pull request content and analysis | `/git-pr` |
+| `skill-creator` | Create and audit skills with best practices and quality scoring | `/skill-creator` |
+| `opencode-task-splitter` | Split large tasks into parallel OpenCode subtasks with model routing | `/opencode-task-splitter` |
+| `task-splitter` | Split large tasks into parallel subtasks across opencode, gemini, codex, and ollama | `/task-splitter` |
+| `cf-crawl` | Crawl websites via Cloudflare Browser Rendering API and save as markdown | `/cf-crawl` |
 | `adversarial-review` | Fresh-eyes code critique via subagent | `/adversarial-review` |
 | `careful` | On-demand safety guardrails for dangerous commands | `/careful` |
 | `freeze` | Restrict edits to a specific directory | `/freeze` |
 | `babysit-pr` | Monitor PR, retry CI, resolve conflicts | `/babysit-pr` |
+| `verify-dot-claude-code-repo` | Run full validation checklist for this repo before committing | `/verify-dot-claude-code-repo` |
 
 ## Using Skills
 
@@ -100,20 +105,14 @@ Must include YAML frontmatter:
 ---
 name: skill-name
 description: When to use this skill - include keywords for matching
-auto_invoke: false
-compatibility: Optional - required tools, packages
-metadata:
-  author: Your name
-  version: "1.0"
 ---
 ```
 
 **Field descriptions:**
-- `name` (required): Skill identifier, lowercase with hyphens
+- `name` (required): Skill identifier, lowercase with hyphens, max 64 chars
 - `description` (required): When to use, 10-1024 characters
-- `auto_invoke`: Whether to auto-activate (usually false)
-- `compatibility`: Required tools or environment
-- `metadata`: Arbitrary key-value pairs (author, version, etc.)
+
+Note: Fields like `auto_invoke`, `compatibility`, and `metadata` are not part of the spec and will be flagged by the audit script.
 
 ## Security
 
@@ -131,17 +130,18 @@ Scripts in this directory:
 
 ## Validation
 
-Validate all skills before committing:
+Validate skill frontmatter before committing:
 
 ```bash
-# Validate all skills
-bash scripts/validate-all-skills.sh
+# Audit a specific skill with scoring
+python global/skills/skill-creator/scripts/audit_skill.py global/skills/<skill-name>
 
-# Generate XML for agent prompts
-bash scripts/validate-all-skills.sh --xml
+# Syntax check all skill scripts
+bash -n global/skills/<skill-name>/scripts/*.sh
 
-# Validate specific directory
-bash scripts/validate-all-skills.sh /path/to/skills
+# Validate JSON configs
+jq empty global/settings.json
+jq empty global/mcp.json
 ```
 
 ## Creating New Skills
@@ -159,7 +159,7 @@ bash scripts/validate-all-skills.sh /path/to/skills
 
 5. Validate:
    ```bash
-   bash scripts/validate-all-skills.sh
+   python global/skills/skill-creator/scripts/audit_skill.py global/skills/my-skill
    ```
 
 6. Install to ~/.claude/:
