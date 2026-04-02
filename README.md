@@ -1,4 +1,4 @@
-# dot-claude-code-installation
+# dot-claude-code
 
 <p align="center">
   <a href="https://opensource.org/licenses/MIT"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" /></a>
@@ -29,6 +29,8 @@ Topic-specific guidelines loaded automatically:
 | `dev-workflow.md` | Git workflow, commit preferences |
 | `mcp-usage.md` | MCP shortcuts and guidelines |
 | `auto-memory.md` | When to update MEMORY.md |
+| `prompt-caching.md` | Avoid breaking prompt cache |
+| `advanced-features.md` | Checkpointing, output styles, path-scoped rules |
 
 ### Skills (`global/skills/`)
 Reusable workflows invoked with `/command`:
@@ -39,7 +41,13 @@ Reusable workflows invoked with `/command`:
 | `git-pr` | `/git-pr` | Generate PR content (I open manually to review) |
 | `skill-creator` | `/skill-creator` | Create and audit skills with best practices and quality scoring |
 | `opencode-task-splitter` | `/opencode-task-splitter` | Split large tasks into parallel OpenCode subtasks with model routing |
+| `task-splitter` | `/task-splitter` | Split large tasks into parallel subtasks across opencode, gemini, codex, and ollama |
 | `cf-crawl` | `/cf-crawl` | Crawl websites via Cloudflare Browser Rendering API and save as markdown |
+| `adversarial-review` | `/adversarial-review` | Fresh-eyes code critique via subagent |
+| `careful` | `/careful` | Behavioral guardrails against dangerous commands (rm -rf, DROP TABLE, force-push) |
+| `freeze` | `/freeze` | Restrict edits to a specific directory for the session |
+| `babysit-pr` | `/babysit-pr` | Monitor a PR, retry flaky CI, resolve conflicts |
+| `verify-dot-claude-code-repo` | `/verify-dot-claude-code-repo` | Run full validation checklist for this repo before committing |
 
 ### Settings (`global/settings.json`)
 - Thinking mode always on (use `/fast` for quick tasks)
@@ -86,14 +94,14 @@ paths: ["src/components/**/*"]
 - Prefer function components
 ```
 
-Create new skills with `/skill-creator` or by copying `templates/skill-template/`. Audit existing skills with `python scripts/audit_skill.py path/to/skill`.
+Create new skills with `/skill-creator` or by copying `templates/skill-template/`. Audit existing skills with `python global/skills/skill-creator/scripts/audit_skill.py path/to/skill`.
 
 Edit `~/.claude/settings.json` to tweak permissions.
 
 ## Structure
 
 ```
-dot-claude-code-installation/
+dot-claude-code/
 ├── install.sh              # One-command install
 ├── global/
 │   ├── CLAUDE.md          # Core instructions
@@ -104,8 +112,17 @@ dot-claude-code-installation/
 │   │   ├── git-pr/
 │   │   ├── skill-creator/
 │   │   ├── opencode-task-splitter/
-│   │   └── cf-crawl/
+│   │   ├── task-splitter/
+│   │   ├── cf-crawl/
+│   │   ├── adversarial-review/
+│   │   ├── careful/
+│   │   ├── freeze/
+│   │   ├── babysit-pr/
+│   │   └── verify-dot-claude-code-repo/
+│   ├── agents/           # Subagent definitions
 │   └── rules/            # Topic-specific rules
+├── docs/                 # Design docs and feature notes
+├── research/             # Reference material and sources
 └── templates/
     └── skill-template/   # Copy this for new skills
 ```
