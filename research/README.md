@@ -5,7 +5,6 @@ Reference material and notes for the dot-claude-code project.
 ## Structure
 
 - `sources/` — Raw content: crawled docs, articles, transcripts
-- `notes/` — Synthesis and analysis of sources
 
 ## Sources Index
 
@@ -37,3 +36,12 @@ Reference material and notes for the dot-claude-code project.
 | `hooks-guide.md` | Practical hooks guide: common use cases, exit codes, matchers, troubleshooting |
 | `agent-teams.md` | Orchestrate multiple Claude Code sessions as a coordinated team |
 | `sub-agents-guide.md` | Comprehensive subagent creation guide (frontmatter, tools, memory, examples) |
+| `claude-2x-status-pages-dev.md` | Claude 2× usage — off-peak doubled usage for Free, Pro, Max & Team plans |
+| `claude-code-dot-claude-anatomy.md` | Anatomy of the .claude/ folder — community breakdown |
+| `claude-code-playground-plugin.md` | Making playgrounds using Claude Code (community tip) |
+| `claude-code-prompt-caching.md` | Lessons from building Claude Code: prompt caching is everything |
+| `claude-code-seeing-like-an-agent.md` | Lessons from building Claude Code: seeing like an agent |
+| `claude-code-skills-lessons.md` | Lessons from building Claude Code: how skills are used |
+| `claude-code-tips-bcherny.md` | Claude Code tips from Boris Cherny (Anthropic) |
+| `legal-and-compliance.md` | Legal and compliance reference for Claude Code |
+| `mateusoliveirab.md` | GitHub profile snapshot |
