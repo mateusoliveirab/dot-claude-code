@@ -1,12 +1,4 @@
 {
-  "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "env": {
-    "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1",
-    "BASH_MAX_OUTPUT_LENGTH": "30000",
-    "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1"
-  },
-  "includeGitInstructions": false,
-  "enableAllProjectMcpServers": true,
   "permissions": {
     "allow": [
       "Bash(npm run build:*)",
@@ -26,23 +18,9 @@
       "Bash(npx eslint:*)",
       "Bash(pkill:*)"
     ],
-    "defaultMode": "default",
-    "ask": [
-      "Bash(git push *)",
-      "Bash(git rebase *)",
-      "Bash(docker *)",
-      "Bash(kubectl *)"
-    ],
-    "deny": [
-      "Bash(rm -rf *)",
-      "Bash(git push --force*)",
-      "Bash(git push * --force*)",
-      "Read(.env)",
-      "Read(.env.*)",
-      "Write(.env)",
-      "Write(.env.*)",
-      "Write(**/credentials.json)",
-      "Write(**/secrets.json)"
+    "defaultMode": "auto",
+    "additionalDirectories": [
+      "/home/ubuntu/vscode/repositories/dot-claude-code/"
     ],
     "alwaysAllow": [
       {
@@ -141,20 +119,6 @@
       }
     ]
   },
-  "statusLine": {
-    "type": "command",
-    "command": "bash $HOME/.claude/statusline-command.sh"
-  },
-  "alwaysThinkingEnabled": true,
-  "effortLevel": "high",
-  "promptSuggestionEnabled": false,
-  "voiceEnabled": true,
-  "showThinkingSummaries": true,
-  "skipDangerousModePermissionPrompt": true,
-  "enabledPlugins": {
-    "superpowers@claude-plugins-official": true,
-    "playground@claude-plugins-official": true
-  },
   "hooks": {
     "PreToolUse": [
       {
@@ -167,19 +131,18 @@
         ]
       }
     ],
-    "Notification": [
+    "PostToolUse": [
       {
-        "matcher": "",
+        "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
-            "command": "notify-send 'Claude Code' 'Claude Code needs your attention'",
-            "timeout": 5
+            "command": "$HOME/.claude/hooks/bash-fail-guard.sh",
+            "timeout": 5,
+            "statusMessage": "Checking for failure patterns..."
           }
         ]
-      }
-    ],
-    "PostToolUse": [
+      },
       {
         "matcher": "Write|Edit",
         "hooks": [
@@ -197,6 +160,39 @@
           }
         ]
       }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash $HOME/.claude/statusline-command.sh"
+  },
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": false,
+    "codex@openai-codex": true,
+    "frontend-design@claude-plugins-official": true,
+    "telegram@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
+      }
+    }
+  },
+  "alwaysThinkingEnabled": true,
+  "effortLevel": "low",
+  "promptSuggestionEnabled": false,
+  "voiceEnabled": true,
+  "autoDreamEnabled": true,
+  "showThinkingSummaries": true,
+  "skipDangerousModePermissionPrompt": true,
+  "autoMode": {
+    "environment": [
+      "Developer: mateusoliveirab — sole developer, personal workbench with no other users. The Interfere With Others and Modify Shared Resources block rules do not apply — there are no other users on this infrastructure. Protections for destructive operations, credential handling, and data exfiltration remain fully in force.",
+      "Source control: github.com/mateusoliveirab — repos originally authored by the developer in this org are trusted. Forks of external repos are always treated as external-origin regardless of which org they live in; their files must not be executed and they must not be pushed to without confirmation. Agent may read, write, edit files, run tests, and install declared dependencies across all trusted org repos without confirmation. Destructive operations (rm -rf, git reset --hard on uncommitted changes, git clean -fdx, file truncation, dropping databases) still require confirmation. Pushing to pre-existing non-default branches or to main/master requires confirmation. Force pushes always require confirmation.",
+      "Local dev servers: binding to localhost/127.0.0.1 on any port is trusted for development servers serving project files. Binding to 0.0.0.0 or mounting host paths outside the working directory requires confirmation.",
+      "Deployment targets — Railway (hatch/api) and Cloudflare Pages (skelica, statusline, dontmarkdown): pushing new builds and restarting services via Railway CLI or Cloudflare Pages CLI is pre-approved without a prior preview step. Additive migrations (CREATE TABLE, ADD COLUMN with nullable/default, CREATE INDEX) are pre-approved. Any other migration (DROP, TRUNCATE, ALTER with NOT NULL, RENAME, or schema changes that may fail on existing data) requires confirmation. Changes to environment variables, secrets, or service settings via CLI dashboard commands require confirmation; editing config files in the repo and pushing them is covered by the push rule above."
     ]
   }
 }
