@@ -7,6 +7,18 @@ Reference material and notes for the dot-claude-code project.
 - `sources/` — Raw content: crawled docs, articles, transcripts
 - `notes/` — Synthesis and analysis of sources
 
+## Notes Index
+
+Synthesized analysis and compiled findings (not raw sources).
+
+| File | Description |
+|------|-------------|
+| `notes/claude-md-findings.md` | 60 empirical findings on CLAUDE.md best practices, context bloat, context rot, and session management (April 2026) |
+| `notes/context-engineering.md` | Operational guide for Claude Code — context modes, session phases, artefact hygiene |
+| `notes/claude-advisor-strategy.md` | Advisor Strategy pattern — Opus as advisor + Sonnet/Haiku as executor for near-Opus intelligence at lower cost (April 2026) |
+
+---
+
 ## Sources Index
 
 | File | Description |
