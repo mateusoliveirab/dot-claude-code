@@ -35,7 +35,7 @@ jq empty global/mcp.json
   - `settings.json` — Permissions and preferences
   - `mcp.json` — MCP server configs (chrome-devtools, shadcn-ui, supabase)
   - `rules/` — Topic-specific rule files (auto-loaded by Claude Code)
-  - `skills/` — Reusable `/command` workflows (git-commit, git-pr, skill-creator, opencode-task-splitter)
+  - `skills/` — Reusable `/command` workflows (adversarial-review, babysit-pr, careful, cf-crawl, freeze, git-commit, git-pr, opencode-task-splitter, skill-creator, task-splitter, verify-dot-claude-code-repo)
   - `agents/` — Subagent definitions
 - `templates/` — Starter templates for project CLAUDE.md and new skills
 - `scripts/` — Validation and utility scripts

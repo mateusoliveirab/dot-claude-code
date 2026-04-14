@@ -24,22 +24,30 @@ Topic-specific guidelines loaded automatically:
 
 | Rule | What it covers |
 |------|----------------|
+| `advanced-features.md` | Advanced Claude Code features: checkpointing, output styles, path-scoped rules |
+| `auto-memory.md` | When to update MEMORY.md |
 | `communication.md` | How I like to communicate, when to ask vs do |
-| `working-approach.md` | Task execution, fast mode usage |
 | `dev-workflow.md` | Git workflow, commit preferences |
 | `mcp-usage.md` | MCP shortcuts and guidelines |
-| `auto-memory.md` | When to update MEMORY.md |
+| `prompt-caching.md` | Avoid patterns that break prompt cache and increase cost/latency |
+| `working-approach.md` | Task execution, fast mode usage |
 
 ### Skills (`global/skills/`)
 Reusable workflows invoked with `/command`:
 
 | Skill | Command | What it does |
 |-------|---------|--------------|
+| `adversarial-review` | `/adversarial-review` | Fresh-eyes code review via subagent before a PR |
+| `babysit-pr` | `/babysit-pr` | Monitor a PR — retry flaky CI, resolve conflicts, notify on state changes |
+| `careful` | `/careful` | Activate behavioral guardrails against dangerous commands (rm -rf, DROP TABLE, force-push) |
+| `cf-crawl` | `/cf-crawl` | Crawl websites via Cloudflare Browser Rendering API and save as markdown |
+| `freeze` | `/freeze` | Restrict all file edits to a specific directory for the current session |
 | `git-commit` | `/git-commit` | Conventional commits, groups by functionality |
 | `git-pr` | `/git-pr` | Generate PR content (I open manually to review) |
-| `skill-creator` | `/skill-creator` | Create and audit skills with best practices and quality scoring |
 | `opencode-task-splitter` | `/opencode-task-splitter` | Split large tasks into parallel OpenCode subtasks with model routing |
-| `cf-crawl` | `/cf-crawl` | Crawl websites via Cloudflare Browser Rendering API and save as markdown |
+| `skill-creator` | `/skill-creator` | Create and audit skills with best practices and quality scoring |
+| `task-splitter` | `/task-splitter` | Split large tasks into parallel subtasks dispatched to multiple AI CLI tools |
+| `verify-dot-claude-code-repo` | `/verify-dot-claude-code-repo` | Run full validation checklist — bash syntax, JSON validation, dry-run install |
 
 ### Settings (`global/settings.json`)
 - Thinking mode always on (use `/fast` for quick tasks)
@@ -99,12 +107,19 @@ dot-claude-code-installation/
 │   ├── CLAUDE.md          # Core instructions
 │   ├── settings.json      # Permissions & preferences
 │   ├── mcp.json          # MCP server configs
+│   ├── agents/           # Subagent definitions
 │   ├── skills/           # Reusable workflows
+│   │   ├── adversarial-review/
+│   │   ├── babysit-pr/
+│   │   ├── careful/
+│   │   ├── cf-crawl/
+│   │   ├── freeze/
 │   │   ├── git-commit/
 │   │   ├── git-pr/
-│   │   ├── skill-creator/
 │   │   ├── opencode-task-splitter/
-│   │   └── cf-crawl/
+│   │   ├── skill-creator/
+│   │   ├── task-splitter/
+│   │   └── verify-dot-claude-code-repo/
 │   └── rules/            # Topic-specific rules
 └── templates/
     └── skill-template/   # Copy this for new skills
