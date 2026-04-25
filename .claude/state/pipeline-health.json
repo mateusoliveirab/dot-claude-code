@@ -1,80 +1,120 @@
 {
-  "last_run": "2026-03-23T04:00:00Z",
+  "last_run": "2026-04-25T04:00:00Z",
   "escalation_threshold_days": 3,
   "baselines": {},
   "ignore": [],
   "backlog": [],
   "escalation": [],
   "_meta": {
-    "note": "First run — baselines not yet established. Workflow run data unavailable via current MCP toolset (no gh run list equivalent). Classification will activate from the second run onward. Commit-history signals collected this run:",
+    "note": "Run 2 — baselines not yet established (no gh CLI / GITHUB_TOKEN available; workflow run data inferred from commit signals). No active failures detected this run. All previous signals resolved.",
     "signals_detected": [
       {
         "repo": "herocloudlab-agents",
-        "date": "2026-03-22",
-        "observation": "5 rapid CI-related commits fixing ANTHROPIC_API_KEY missing from workflow steps. Suggests auth/permissions instability in gcp-ci.yml, generate-aws-questions.yml, generate-gcp-questions.yml. Final commit indicates fixes landed — monitor next run.",
+        "date": "2026-04-19",
+        "observation": "All scheduled workflows intentionally disabled — project paused. Previous ANTHROPIC_API_KEY issue (2026-03-22) fully resolved: generate-aws-questions.yml and generate-gcp-questions.yml renamed to .disabled. Active workflows: gcp-ci.yml, opencode.yml, review-questions.yml, sync-to-supabase.yml, ui-tests.yml.",
         "commits": [
-          "fix(ci): add ANTHROPIC_API_KEY to 'Get priority certification' step",
-          "fix(config): make ANTHROPIC_API_KEY optional for non-API commands",
-          "feat(ci): classify Anthropic API errors and write failure summary on generation failure",
-          "feat(ci): surface Anthropic error type in step summary with billing link",
-          "feat(ci): add step summary with Anthropic error classification and billing link"
-        ]
+          "chore: disable scheduled workflows — project paused"
+        ],
+        "status": "resolved"
       },
       {
         "repo": "workbench",
-        "date": "2026-03-22",
-        "observation": "hatch-agent-docs-updater workflow had a non-fast-forward push failure. Fix committed same day (rebase before push). Monitor for recurrence.",
+        "date": "2026-04-19",
+        "observation": "All hatch agent scheduled workflows disabled (hatch-agent-ceo, coordinator, developer, devops-engineer, docs-updater, market-research → .disabled). hatch-docs-updater non-fast-forward issue from 2026-03-23 is fully resolved. statusline-deploy.yml removed (project archived) but statusline-iac.yml still present — references a now-deleted terraform directory; could produce ENOENT if triggered. Monitor for stale-workflow trigger on next run.",
         "commits": [
-          "fix(ci): hatch docs updater — rebase before push to avoid non-fast-forward"
-        ]
+          "chore: disable all hatch agent scheduled workflows",
+          "chore: archive statusline and fix dontmarkdown URL",
+          "chore: rename project dontmarkdown → onlinemd"
+        ],
+        "status": "resolved — monitor statusline-iac.yml for trigger"
+      },
+      {
+        "repo": "workbench",
+        "date": "2026-04-05",
+        "observation": "4 rapid CI fix commits for dontmarkdown-iac.yml (IaC apply loop, workflow_dispatch trigger, TF state cache, deploy dispatch after apply). All resolved same day. Workflow subsequently renamed to onlinemd-iac.yml on 2026-04-19. No recurrence.",
+        "commits": [
+          "fix(dontmarkdown): separate IaC from wrangler deploy and document secrets",
+          "fix(dontmarkdown): allow IaC apply on workflow_dispatch",
+          "fix(dontmarkdown): trigger deploy workflow after IaC apply",
+          "fix(dontmarkdown): remove R2, add TF state cache, fix apply loop"
+        ],
+        "status": "resolved"
+      },
+      {
+        "repo": "workbench",
+        "date": "2026-03-23",
+        "observation": "2 rapid fix commits for skelica-deploy.yml: wrangler path issue (wrangler-action doesn't inherit working-directory) and wrangler pre-install for npm 10 / Node 22 compatibility. Fixed same day, no recurrence.",
+        "commits": [
+          "fix(skelica): corrigir path do dist no deploy do Cloudflare Pages",
+          "fix(skelica): pré-instalar wrangler antes do deploy (npm 10 + npx)"
+        ],
+        "status": "resolved"
       },
       {
         "repo": "singledrop-newsletter",
-        "date": "2026-03-15 to 2026-03-23",
-        "observation": "daily-monitor.yml appears healthy — scheduled commits from GitHub Action on 03-15, 03-17, 03-20. Past failures on 03-10, 03-13 were credential-related and removed. PR #9 merged successfully today (deps fix).",
+        "date": "2026-04-19",
+        "observation": "daily-monitor.yml intentionally disabled — project decommissioned. Workflow ran healthily until 2026-04-17 (last GitHub Action commit: Update reports - 2026-04-17). Clean shutdown.",
         "commits": [
-          "Update reports - 2026-03-20",
-          "Update reports - 2026-03-17",
-          "Update reports - 2026-03-15"
-        ]
+          "chore: disable daily-monitor workflow — project decommissioned"
+        ],
+        "status": "decommissioned"
       },
       {
         "repo": "iac",
-        "date": "2026-02-07",
-        "observation": "Last commit was 2026-02-07 (44 days ago). Workflows aws.yml and cloudflare.yml likely dormant."
+        "date": null,
+        "observation": "No commits since 2026-02-07 (78 days ago). Workflows aws.yml and cloudflare.yml remain dormant.",
+        "status": "dormant"
       }
     ],
     "workflow_inventory": {
-      "workbench": [
-        "3d-bussines-model-gen.yml",
-        "dontmarkdown-deploy.yml",
-        "dontmarkdown-iac.yml",
-        "hatch-agent-developer.yml",
-        "hatch-agent-devops-engineer.yml",
-        "hatch-agent-docs-updater.yml",
-        "hatch-agent-researcher.yml",
-        "hatch-agent-reviewer.yml",
-        "hatch-backlog-task-runner.yml",
-        "hatch-deploy.yml",
-        "skelica-deploy.yml",
-        "skelica-iac.yml",
-        "statusline-deploy.yml",
-        "statusline-iac.yml"
-      ],
-      "herocloudlab-agents": [
-        "gcp-ci.yml",
-        "generate-aws-questions.yml",
-        "generate-gcp-questions.yml",
-        "opencode.yml",
-        "review-questions.yml",
-        "sync-to-supabase.yml",
-        "ui-tests.yml"
-      ],
-      "singledrop-newsletter": [
-        "daily-monitor.yml",
-        "image-generation.yml",
-        "opencode.yml"
-      ],
+      "workbench": {
+        "active": [
+          "3d-bussines-model-gen.yml",
+          "hatch-agent-researcher.yml",
+          "hatch-agent-reviewer.yml",
+          "hatch-backlog-task-runner.yml",
+          "hatch-deploy.yml",
+          "onlinemd-deploy.yml",
+          "onlinemd-iac.yml",
+          "skelica-deploy.yml",
+          "skelica-iac.yml",
+          "statusline-iac.yml",
+          "terraform-destroy.yml"
+        ],
+        "disabled": [
+          "hatch-agent-ceo.yml.disabled",
+          "hatch-agent-coordinator.yml.disabled",
+          "hatch-agent-developer.yml.disabled",
+          "hatch-agent-devops-engineer.yml.disabled",
+          "hatch-agent-docs-updater.yml.disabled",
+          "hatch-agent-market-research.yml.disabled"
+        ],
+        "watch": [
+          "statusline-iac.yml — project archived but workflow not removed; references deleted terraform dir"
+        ]
+      },
+      "herocloudlab-agents": {
+        "active": [
+          "gcp-ci.yml",
+          "opencode.yml",
+          "review-questions.yml",
+          "sync-to-supabase.yml",
+          "ui-tests.yml"
+        ],
+        "disabled": [
+          "generate-aws-questions.yml.disabled",
+          "generate-gcp-questions.yml.disabled"
+        ]
+      },
+      "singledrop-newsletter": {
+        "active": [
+          "image-generation.yml",
+          "opencode.yml"
+        ],
+        "disabled": [
+          "daily-monitor.yml (decommissioned)"
+        ]
+      },
       "herocloudlab": [
         "terraform.yml"
       ],
