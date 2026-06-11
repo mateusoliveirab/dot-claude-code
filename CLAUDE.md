@@ -9,22 +9,15 @@ A dotfiles-style repository for Claude Code global configuration (`~/.claude/`).
 ## Commands
 
 ```bash
-# Install (copies global/ to ~/.claude/)
-bash install.sh
-
-# Dry-run install (no changes)
-bash install.sh --dry-run
-
 # Audit a specific skill with scoring
 python global/skills/skill-creator/scripts/audit_skill.py global/skills/<skill-name>
-
-# Syntax check install script
-bash -n install.sh
 
 # Validate JSON configs
 jq empty global/settings.json
 jq empty global/mcp.json
 ```
+
+To link config files into `~/.claude/`, use the `/link-config` skill.
 
 ## Architecture
 
@@ -66,9 +59,6 @@ description: What + WHEN     # required, max 1024 chars
 
 `audit_skill.py` scores 7 categories: frontmatter (15%), documentation (20%), workflow (20%), examples (15%), structure (15%), scripts (10%), cross-model compat (5%). Score >= 80 is production-ready. All 5 critical gates must score >= 60.
 
-### Install Script
-
-Uses `rsync` (fallback `cp --parents`), backs up existing configs, merges MCP configs via `jq` + `envsubst`. All bash scripts use `set -euo pipefail` and support `--dry-run`.
 
 ## Code Style
 
@@ -86,7 +76,7 @@ Uses `rsync` (fallback `cp --parents`), backs up existing configs, merges MCP co
 
 ## Testing Checklist
 
-Before submitting: `bash -n install.sh` passes, `bash install.sh --dry-run` succeeds, JSON files validate with `jq empty`, no secrets in committed files, `.env.example` updated if new env vars added.
+Before submitting: JSON files validate with `jq empty`, no secrets in committed files, `.env.example` updated if new env vars added.
 
 ## Git
 

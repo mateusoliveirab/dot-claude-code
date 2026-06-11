@@ -17,8 +17,8 @@ Contributions are welcome. This repository contains my personal Claude Code conf
 
 ## Guidelines
 
-- Follow existing code style (check `install.sh` and existing files)
-- Test changes: `bash install.sh --dry-run`
+- Follow existing code style (check existing files for reference)
+- Validate JSON configs with `jq empty` before submitting
 - Keep commits focused and atomic
 
 ## Types of Contributions
@@ -26,7 +26,7 @@ Contributions are welcome. This repository contains my personal Claude Code conf
 - **New skills** — Reusable workflows (`/command` style)
 - **Rule improvements** — Better guidelines for specific topics
 - **Documentation** — Clearer explanations and examples
-- **Bug fixes** — Issues in install scripts or configs
+- **Bug fixes** — Issues in scripts or configs
 
 ## Denouncement
 
