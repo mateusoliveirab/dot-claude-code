@@ -33,7 +33,7 @@ jq empty global/mcp.json
 - `global/` — Everything installed to `~/.claude/`
   - `CLAUDE.md` — Minimal base instructions
   - `settings.json` — Permissions and preferences
-  - `mcp.json` — MCP server configs (chrome-devtools, shadcn-ui, supabase)
+  - `mcp.json` — MCP server configs (shadcn-ui, supabase)
   - `rules/` — Topic-specific rule files (auto-loaded by Claude Code)
   - `skills/` — Reusable `/command` workflows (git-commit, git-pr, skill-creator, opencode-task-splitter)
   - `agents/` — Subagent definitions

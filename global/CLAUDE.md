@@ -14,7 +14,6 @@
 
 ## MCP Servers
 
-- **Chrome DevTools** — Validate UI, inspect elements, verify layout
 - **Shadcn UI** — Add/lookup UI components
 - **Supabase** — Database, auth, storage operations
 
