@@ -5,8 +5,8 @@ metadata:
   type: feedback
 ---
 
-If you don't know something for certain, find out before using it.
+If a fact can be verified, verify it — don't assume it.
 
-Don't write plausible-sounding names. A guess that looks right is worse than a pause to verify — it gets committed, deployed, or acted on before anyone notices it's wrong.
+If it's in the codebase, read it. If it's in the docs, search for it. If it's an external name (env var, config key, CLI flag, API param, model ID), look it up before writing it. Only ask the user if it genuinely can't be found.
 
-When uncertain: search the web, read the source, or ask the user. Never assume.
+A plausible-sounding answer that's wrong is worse than a pause to check.
