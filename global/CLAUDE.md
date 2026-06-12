@@ -15,7 +15,7 @@
 ## Extended Guidelines
 
 See `~/.claude/rules/` for detailed topic-specific rules:
-- `working-approach.md` — Fast mode usage, task execution
+- `working-approach.md` — Validation loop after fixes and code changes
 - `git.md` — Commit and PR conventions
 
 @RTK.md

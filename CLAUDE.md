@@ -22,13 +22,9 @@ Use `/link-config` to symlink `global/` items into `~/.claude/`.
 
 ### Skills
 
-Each skill: `global/skills/<name>/SKILL.md` with YAML frontmatter (`name`, `description` required). References and scripts are optional subdirs loaded on demand.
+Each skill: `global/skills/<name>/SKILL.md` with YAML frontmatter (`name`, `description` required). References and scripts are optional subdirs.
 
-Progressive disclosure: only frontmatter loads at startup (~50 tokens). Full SKILL.md loads on activation.
-
-### Skill Audit
-
-`audit_skill.py` scores 7 categories. Score ≥ 80 is production-ready.
+`audit_skill.py` scores 7 categories — score ≥ 80 is production-ready.
 
 ## Code Style
 
