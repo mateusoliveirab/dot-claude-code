@@ -4,16 +4,12 @@ description: Validation requirements after fixes and code changes
 
 # Working Approach
 
-## Validation Loop After Fixes
+## After Any Fix or Change
 
-After making any fix or change (especially after debugging errors):
-1. Test the changed endpoint/feature directly (curl, browser, MCP, etc.)
-2. Test edge cases (empty input, missing fields, error paths)
-3. Only report done after all validations pass
+Test before reporting done — don't assume it works.
 
-## Validate After Any Script/Code Change
+If the endpoint can be hit, hit it. If the script can be run, run it. If edge cases can be exercised, exercise them. Only report done after validation passes.
 
-After editing any script or config file, always run validation before reporting done:
 - Bash scripts: `bash -n <script>` (syntax) + `bash <script> --dry-run` if supported
 - JSON files: `jq empty <file>`
-- Never skip this step — making a change without testing it is incomplete work
+- Endpoints/features: curl, browser, MCP — test directly, not just by reading the code
