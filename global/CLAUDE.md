@@ -16,7 +16,6 @@
 
 See `~/.claude/rules/` for detailed topic-specific rules:
 - `working-approach.md` — Fast mode usage, task execution
-- `auto-memory.md` — When/how to update MEMORY.md
 - `git.md` — Commit and PR conventions
 
 @RTK.md
