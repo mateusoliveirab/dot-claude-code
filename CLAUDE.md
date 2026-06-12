@@ -80,5 +80,5 @@ Before submitting: JSON files validate with `jq empty`, no secrets in committed 
 
 ## Git
 
-Use `git` CLI (not `gh`). Follow conventional commit style. Use `/git-commit` and `/git-pr` skills.
+Use `git` CLI (not `gh`). Follow conventional commit style (see `rules/git.md`).
 Branch naming: `feat/`, `fix/`, `chore/`, `docs/` prefixes matching the commit type.
