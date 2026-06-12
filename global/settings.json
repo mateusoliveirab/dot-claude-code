@@ -166,6 +166,8 @@
       }
     }
   },
+  "enableWorkflows": true,
+  "agentTeamsEnabled": true,
   "alwaysThinkingEnabled": true,
   "effortLevel": "low",
   "promptSuggestionEnabled": false,
