@@ -31,4 +31,4 @@ Title: `<type>: brief description`
 
 Body: what changed, why it changed, how to validate. Keep it short.
 
-Open PRs manually via the web interface — never auto-create with `gh pr create` unless explicitly asked.
+Open PRs manually via the web interface unless explicitly asked to create one.
