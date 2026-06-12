@@ -25,10 +25,3 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 - If a pre-commit hook fails, fix the issue and create a **new** commit — never `--amend` the previous one
 - Never use `--no-verify` unless explicitly requested
 
-## Pull Requests
-
-Title: `<type>: brief description`
-
-Body: what changed, why it changed, how to validate. Keep it short.
-
-Create PRs when asked — after creating, return the URL for the user to open.
