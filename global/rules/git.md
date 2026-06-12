@@ -27,27 +27,8 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 
 ## Pull Requests
 
-**Title format:** `<type>: brief description`
+Title: `<type>: brief description`
 
-**Description template:**
+Body: what changed, why it changed, how to validate. Keep it short.
 
-```markdown
-## Summary
-Brief overview of what this PR accomplishes.
-
-## What & Why
-**What:** bullet list of changes
-**Why:** motivation behind the changes
-
-## Validation
-- [ ] Self-review completed
-- [ ] No sensitive data in changes
-- [ ] Tests pass locally
-
-## Changes
-| File | Change |
-|------|--------|
-| `path/to/file` | description |
-```
-
-Open PRs manually via the web interface — do not auto-create with `gh pr create` unless explicitly asked.
+Open PRs manually via the web interface — never auto-create with `gh pr create` unless explicitly asked.
