@@ -1,13 +1,8 @@
 ---
-description: Working approach and task execution guidelines
+description: Validation requirements after fixes and code changes
 ---
 
 # Working Approach
-
-- Always ask clarifying questions BEFORE creating detailed implementations.
-- Suggest and discuss options before executing.
-- Do not implement improvements or features that were not requested. If you identify something that could be improved, suggest it for discussion instead of implementing directly.
-- Focus only on what was asked.
 
 ## Validation Loop After Fixes
 
@@ -22,13 +17,3 @@ After editing any script or config file, always run validation before reporting 
 - Bash scripts: `bash -n <script>` (syntax) + `bash <script> --dry-run` if supported
 - JSON files: `jq empty <file>`
 - Never skip this step — making a change without testing it is incomplete work
-
-## Fast Mode Usage
-
-- Use fast mode (`/fast`) for simple tasks: code review, bug fixes, refactoring, small edits
-- Use thinking mode (default) for complex tasks: architecture decisions, new features, debugging, planning
-
-## Recovery
-
-- Use `Esc+Esc` or `/rewind` to restore code and/or conversation to a checkpoint after mistakes
-- Checkpoints are automatic — no manual save needed
