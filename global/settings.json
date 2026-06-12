@@ -166,8 +166,9 @@
       }
     }
   },
-  "enableWorkflows": true,
-  "agentTeamsEnabled": true,
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
   "alwaysThinkingEnabled": true,
   "effortLevel": "low",
   "promptSuggestionEnabled": false,
