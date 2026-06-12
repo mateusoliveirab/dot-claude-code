@@ -31,4 +31,4 @@ Title: `<type>: brief description`
 
 Body: what changed, why it changed, how to validate. Keep it short.
 
-Open PRs manually via the web interface unless explicitly asked to create one.
+Create PRs when asked — after creating, return the URL for the user to open.
