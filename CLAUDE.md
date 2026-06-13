@@ -32,6 +32,10 @@ Each skill: `global/skills/<name>/SKILL.md` with YAML frontmatter (`name`, `desc
 **Markdown:** YAML frontmatter between `---`, `kebab-case.md` filenames
 **JSON:** 2-space indent, no trailing commas
 
+## Docs Sync
+
+Docs and code drift easily here. After any change, update every related doc in the same commit — `README.md`, `CLAUDE.md`, `AGENTS.md`, `CONTRIBUTING.md`, and relevant files under `docs/`. Adding/removing a skill, agent, hook, script, or settings key means updating wherever it's listed. A `Docs Updater` GitHub workflow (opencode) is a backstop, not a substitute — keep docs current as you go.
+
 ## Testing Checklist
 
 `jq empty global/settings.json` passes, no secrets committed, `.env.example` updated if new env vars added.

@@ -1,0 +1,64 @@
+name: Docs Updater
+
+# Keeps documentation in sync with code/config. Runs after every push to main
+# (you commit straight to main) and on manual dispatch. It opens a PR with the
+# fixes — it never commits docs directly to main.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Don't react to the bot's own activity; avoids self-triggered loops.
+concurrency:
+  group: docs-updater-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  docs-updater:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write        # create branch / commit docs
+      pull-requests: write   # open the PR
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run opencode docs-updater
+        uses: sst/opencode/github@latest
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GH_TOKEN: ${{ github.token }}
+        with:
+          # Bump as newer models ship; format is provider/model.
+          model: google/gemini-2.5-flash
+          prompt: |
+            You are the docs-updater for this repository. Keep documentation in
+            sync with the actual code, config, scripts, skills, agents and hooks.
+
+            Scope of docs to audit and fix:
+            - README.md, CLAUDE.md, AGENTS.md, CONTRIBUTING.md
+            - everything under docs/
+            - per-skill SKILL.md and per-agent .md frontmatter/descriptions
+
+            Rules:
+            - Follow the principles in global/agents/docs-updater.md and AGENTS.md.
+            - Fix ONLY high-confidence drift you can verify from the repo itself
+              (broken commands, wrong paths, missing/renamed files, stale env vars,
+              new skills/agents/hooks not documented, removed items still listed).
+            - NEVER modify non-documentation source (scripts, settings.json, hooks,
+              skill/agent logic). Docs and markdown only.
+            - Never invent information that isn't grounded in the repo.
+            - If you find nothing to fix, make NO changes and open NO PR. Stop.
+
+            When you do have fixes:
+            1. Create a branch named docs/auto-update-${{ github.run_id }}.
+            2. Commit with a Conventional Commits message, e.g.
+               "docs: sync docs with current code/config".
+            3. Open a pull request targeting main via `gh pr create`. In the body,
+               group changes as High-confidence vs Needs-review, and list each file
+               touched with a one-line reason. Do not merge it.
