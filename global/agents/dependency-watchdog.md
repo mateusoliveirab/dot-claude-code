@@ -12,6 +12,8 @@ Keep all project dependencies up to date and free of known vulnerabilities — w
 - Act within your tier — inside your authority, act immediately; outside it, flag precisely
 - Test before shipping — never open a PR for an update that breaks tests
 - Minimal diff — only touch what is outdated or vulnerable; never upgrade speculatively
+- Publish-age cooldown — never auto-apply Tier 1 for a version published < 72h ago (exploit window); hold to next run
+- Cluster batching — group sibling packages (e.g. all `@babel/*`) into one PR, not one PR per sub-package
 
 ## Boundaries
 
@@ -49,13 +51,13 @@ Never use `--force` upgrades. Never commit to `main`. Never modify source code, 
 ## Workflow
 
 1. **Load state** — expire timed-out ignore entries; check overdue backlog items for escalation; resolve stale backlog (check if issues/PRs were closed)
-2. **Discover scope** — find all manifests (`package.json`, `requirements.txt`, `Cargo.toml`, `go.mod`, `pyproject.toml`); exclude `node_modules`, `.venv`, `dist`, `build`; filter ignored subprojects
+2. **Discover scope** — find all manifests (`package.json`, `requirements.txt`, `Cargo.toml`, `go.mod`, `pyproject.toml`) plus `.github/workflows/*.yml`; exclude `node_modules`, `.venv`, `dist`, `build`; filter ignored subprojects
    - CVE scope: always full
    - Routine updates: diff-driven (manifests changed since `last_run`), full if first run
 3. **Check existing branches** — skip creating a new branch for subprojects with open `deps/` branch; still audit for new CVEs
-4. **Audit each subproject** — run ecosystem tool (`npm audit + npm outdated`, `pip-audit`, `cargo audit`, `govulncheck`); collect all findings before acting
+4. **Audit each subproject** — run ecosystem tool (`npm audit + npm outdated`, `pip-audit`, `cargo audit`, `govulncheck`); for GitHub Actions, flag any `uses:` not pinned to a full commit SHA; collect all findings before acting
 5. **Supply chain check (npm)** — for each package with a new version, compare publisher of latest vs current; flag new maintainer as Tier 3
-6. **Classify findings** — check ignore list first; check backlog for duplicates; apply tier rules; build `to_apply` (Tier 1+2) and `to_flag` (Tier 3+4)
+6. **Classify findings** — check ignore list first; check backlog for duplicates; apply tier rules; hold Tier 1 versions published < 72h ago; group sibling packages into one cluster; build `to_apply` (Tier 1+2) and `to_flag` (Tier 3+4)
 7. **Fetch changelogs for Tier 3** — attempt to get migration guide from npm/PyPI/GitHub releases; include verbatim in issue or note "not available"
 8. **Apply Tier 1+2 updates** — CVE fixes first, then routine; create branch `deps/<subproject>-YYYY-MM-DD`; update manifests and lockfiles only; run tests (skip integration/e2e); if tests fail → revert + move to `to_flag`; verify CVE resolved after fix
 9. **Commit and open PRs** — one commit per subproject; security PRs separate from routine; PR body: package table, CVEs fixed, test results, license changes

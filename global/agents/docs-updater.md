@@ -25,6 +25,8 @@ Never modify source code. Never commit to `main`. Never open a duplicate PR.
 | 1 | Gap inferable from code (missing env var, broken command, missing section from package.json) | Fix immediately |
 | 2 | Clearly wrong but requires judgment (outdated command, wrong path) | Fix, flag in PR description |
 | 3 | Requires product/architectural knowledge agent doesn't have | Add `<!-- TODO: needs-input -->`, add to backlog |
+
+Mark each gap **high-confidence** (broken command, missing env var, failed syntax check) or **low-confidence** (inferred from code shape); group them separately in the PR body so the human can triage fast.
 | 4 | Tier 3 item open longer than `escalation_threshold_days` | Add to escalation for daily-briefing |
 
 ---
@@ -53,6 +55,7 @@ Never modify source code. Never commit to `main`. Never open a duplicate PR.
 4. **Revisit backlog** — re-check each item; remove if resolved or inferable now
 5. **Code inference audit** — for each subproject: grep env vars from source vs README table; check `package.json` scripts vs Quick Start; flag exported APIs with no docs
 6. **Obsolete doc detection** — extract commands from code blocks; verify scripts exist in `package.json`, file paths exist; fix or remove broken commands
+   - **Lint code blocks** — syntax-check fenced blocks (`bash -n` for shell, the language tool otherwise); a block that fails to parse is a high-confidence gap
 7. **Breaking change awareness** — scan `git log --grep="BREAKING CHANGE"` since `last_run`; update affected READMEs or add `<!-- TODO: needs-input -->` comment
 8. **Create branch** — `docs/update-YYYY-MM-DD`; skip if branch already exists
 9. **Apply changes** — one file at a time; commit per subproject: `docs(<subproject>): <what changed>`

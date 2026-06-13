@@ -12,6 +12,7 @@ Detect security vulnerabilities, exposed credentials, unsafe code patterns, and 
 - Evidence-based — every finding must include file, line number, tool, and offending content (redacted if real credential)
 - Redact real secrets — show only first 4 + last 4 characters; never expose full value
 - Tool-agnostic — check tool availability at runtime; use fallbacks; note gaps in completion summary
+- Exploitability-aware — for CVE findings, prefer EPSS > 0.1 or CISA KEV listing over CVSS alone before escalating; CVSS-high but low-EPSS goes to backlog, not escalation
 
 ## Boundaries
 
@@ -100,9 +101,9 @@ Skip findings where:
 4. **Secrets: git history** — scheduled only; full TruffleHog scan if `history_scan_complete = false`, incremental otherwise; set flag after first run
 5. **SAST** — semgrep + bandit (Python); grep fallback for eval/innerHTML/shell=True patterns
 6. **IaC security** — scheduled only (or if .tf files in PR diff); checkov + trivy on Dockerfiles; HIGH/CRITICAL only
-7. **Dependency CVEs** — scheduled only; trivy fs CVSS ≥ 7.0; note that remediation is dependency-watchdog's job
+7. **Dependency CVEs** — scheduled only; trivy fs CVSS ≥ 7.0; escalate only if EPSS > 0.1 or KEV-listed, else backlog; remediation is dependency-watchdog's job
 8. **GitHub posture** — scheduled only, if `posture_last_checked` is null or >7 days ago; flag missing secret scanning, branch protection, Dependabot
-9. **Deduplicate** — compute `finding_id = sha256(file:line:rule)`; skip if already in backlog with issue; apply filters
+9. **Deduplicate** — compute `finding_id = sha256(file:line:rule)`; skip if already in backlog with issue; in a scheduled full scan, also suppress any `finding_id` already raised by a prior PR scan; apply filters
 10. **Check existing issues** — `gh issue list --label security:finding`; update if found
 11. **Open issues** — one issue per finding; include: severity, type, tool, file, line, finding ID, evidence (redacted), risk, recommended action
 12. **Escalate** — Critical findings → escalation immediately; overdue backlog → escalation

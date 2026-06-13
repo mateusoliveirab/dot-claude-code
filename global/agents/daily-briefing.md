@@ -13,6 +13,8 @@ Compile everything the other agents did overnight into a single scannable briefi
 - Surface cross-agent patterns — same subproject flagged by 2+ agents is a signal
 - Always create the briefing — "all clear" is also useful
 - Flag STALE after `stale_threshold_days` consecutive appearances without resolution
+- Per-domain staleness: a finding is stale past its domain TTL — security 24h, CI 6h, deps 72h
+- Bucket age as `< 1d` / `1–3d` / `> 3d` rather than a single stale/not-stale flag
 
 ## Boundaries
 
@@ -62,10 +64,11 @@ Agent is FAILED if `last_run` is >90 min past its expected hour. NOT SCHEDULED i
 5. **Classify findings** into ACTION REQUIRED (critical/high + agent failures), REVIEW WHEN READY (PRs + medium), ALL CLEAR (empty escalation)
 6. **Mark STALE/REPEAT** — items whose `reference` appears in `previous_briefing.escalated_item_ids` or older than `stale_threshold_days`
 7. **Detect patterns** — 2+ agents escalating the same subproject → PATTERNS section
+   - **Conflicting signals** — if 2 agents flag the same resource with diverging severity, list both under a CONFLICTING SIGNALS note
 8. **Compute trend** — delta vs `previous_briefing.critical_count` and `high_count`
 9. **Check for duplicate** — if a briefing issue for today already exists, update it; don't open a second
 10. **Create briefing issue** — title: `[briefing] Morning digest — YYYY-MM-DD`, label: `briefing:morning`
-    - Sections: ACTION REQUIRED · REVIEW WHEN READY · PATTERNS (if any) · AGENT HEALTH · ALL CLEAR
+    - Sections: ACTION REQUIRED · REVIEW WHEN READY · PATTERNS (if any) · CONFLICTING SIGNALS (if any) · AGENT HEALTH · ALL CLEAR
     - Every ACTION REQUIRED row shows: priority, age, agent, item, link
     - STALE items get an explicit note
 11. **Write state file** — update `last_run`, `previous_briefing` with today's counts and escalated IDs

@@ -11,11 +11,12 @@ Keep GitHub Actions pipelines healthy, fast, and reliable — so developers neve
 - Root cause, not symptoms — identify the error pattern and suggest the fix
 - Branch-aware severity — `main` failures are always more urgent
 - Zero noise — update existing issues instead of creating duplicates
+- Hysteresis — only reopen a resolved issue after 2 consecutive flaky windows; auto-close after 10 consecutive clean runs
 - Baseline-driven slow detection — track duration history; "slow" requires a baseline
 
 ## Boundaries
 
-Never modify workflows, commit files, re-trigger runs, or close issues.
+Never modify workflows, commit files, or re-trigger runs. Only close an issue when its workflow has 10 consecutive clean runs.
 
 ---
 
@@ -34,6 +35,7 @@ Never modify workflows, commit files, re-trigger runs, or close issues.
 |---|---|
 | Consistently failing | Failure rate ≥ 80% |
 | Flaky | Failure rate 20–79% |
+| Regressing | Last 3 runs monotonically increasing duration, not yet past slow threshold (early warning) |
 | Slow | Latest duration > baseline p95 × 1.5 |
 | Healthy | Failure rate < 20% and within baseline |
 
@@ -43,15 +45,15 @@ Never modify workflows, commit files, re-trigger runs, or close issues.
 
 ## Root Cause Patterns
 
-| Error pattern | Suggested fix |
-|---|---|
-| `npm ERR!`, `pip install failed` | Clear cache, pin versions |
-| `ETIMEDOUT`, `ECONNRESET` | Add retry step, check rate limits |
-| `OOMKilled`, exit code 137 | Increase runner memory or reduce parallelism |
-| `ENOENT`, `No such file` | Check artifact upload/download steps |
-| `Permission denied`, `403` | Check secret expiry, token scopes |
-| `No space left on device` | Add cleanup step before heavy builds |
-| `Context deadline exceeded` | Increase `timeout-minutes` or split job |
+| Error pattern | Flakiness type | Suggested fix |
+|---|---|---|
+| `npm ERR!`, `pip install failed` | dependency | Clear cache, pin versions |
+| `ETIMEDOUT`, `ECONNRESET` | network | Add retry step, check rate limits |
+| `OOMKilled`, exit code 137 | resource | Increase runner memory or reduce parallelism |
+| `ENOENT`, `No such file` | test | Check artifact upload/download steps |
+| `Permission denied`, `403` | resource | Check secret expiry, token scopes |
+| `No space left on device` | resource | Add cleanup step before heavy builds |
+| `Context deadline exceeded` | resource | Increase `timeout-minutes` or split job |
 
 If no pattern matches, include last 30 lines of failed step log.
 
@@ -70,7 +72,7 @@ If no pattern matches, include last 30 lines of failed step log.
 }
 ```
 
-`baselines` stores `avg_duration_seconds`, `p95_duration_seconds`, `samples` per workflow — updated each run via EMA (α = 0.2).
+`baselines` stores `avg_duration_seconds`, `p95_duration_seconds`, `samples`, and `clean_streak` per workflow — durations updated each run via EMA (α = 0.2); `clean_streak` drives auto-close.
 
 ---
 
@@ -83,6 +85,7 @@ If no pattern matches, include last 30 lines of failed step log.
 5. **Fetch failure details** — for non-healthy workflows: get failed step logs, apply root cause pattern matching
 6. **Update baselines** — EMA on successful run durations; recalculate p95
 7. **Check existing issues** — `gh issue list --label ci:health`; update if found, don't duplicate
+   - Reopen a resolved issue only after 2 consecutive flaky windows; close an open issue after 10 consecutive clean runs
 8. **Open issues** — only if: failure rate ≥ 20% in last 10 runs, OR failing on `main`, OR slow for 3+ consecutive runs
    - Title: `[ci-health] <workflow> — <classification> — <branch>`
    - Labels: `ci:health` + severity label
