@@ -1,146 +1,91 @@
-# dot-claude-code-installation
+# dot-claude-code
 
 <p align="center">
   <a href="https://opensource.org/licenses/MIT"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" /></a>
   &nbsp;
   <a href="https://claude.com/claude-code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude%20Code-Powered-d97757?logo=anthropic" /></a>
-  &nbsp;
-  <a href="https://claude.com/contact-sales/claude-for-oss"><img alt="Claude for Open Source" src="https://img.shields.io/badge/Claude-Open%20Source%20Program-D97757?style=flat&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIzIiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==" /></a>
 </p>
 
-My personal Claude Code setup — modular rules, reusable skills, MCP servers, and sane defaults. Versioned with git and easy to install.
-
-The idea is simple: instead of one giant CLAUDE.md file, split instructions into focused rules that Claude loads automatically. Keep everything in git so you can track changes and sync across machines.
-
-If you already have a `~/.claude/CLAUDE.md`, don't worry — the install script preserves it. You can gradually migrate content to rules or keep using both.
-
-## What's Included
-
-### Core Instructions (`global/CLAUDE.md`)
-Base instructions that apply to every conversation — communication style, working approach, MCP usage.
-
-### Modular Rules (`global/rules/`)
-Topic-specific guidelines loaded automatically:
-
-| Rule | What it covers |
-|------|----------------|
-| `communication.md` | How I like to communicate, when to ask vs do |
-| `working-approach.md` | Task execution, fast mode usage |
-| `dev-workflow.md` | Git workflow, commit preferences |
-| `mcp-usage.md` | MCP shortcuts and guidelines |
-| `auto-memory.md` | When to update MEMORY.md |
-
-### Skills (`global/skills/`)
-Reusable workflows invoked with `/command`:
-
-| Skill | Command | What it does |
-|-------|---------|--------------|
-| `git-commit` | `/git-commit` | Conventional commits, groups by functionality |
-| `git-pr` | `/git-pr` | Generate PR content (I open manually to review) |
-| `skill-creator` | `/skill-creator` | Create and audit skills with best practices and quality scoring |
-| `opencode-task-splitter` | `/opencode-task-splitter` | Split large tasks into parallel OpenCode subtasks with model routing |
-| `cf-crawl` | `/cf-crawl` | Crawl websites via Cloudflare Browser Rendering API and save as markdown |
-
-### Settings (`global/settings.json`)
-- Thinking mode always on (use `/fast` for quick tasks)
-- Granular permissions — auto-approve safe operations, block dangerous ones
-- No prompt suggestions (cleaner experience)
-
-### MCP Servers (`global/mcp.json`)
-Pre-configured servers:
-- **Chrome DevTools** — UI validation, inspect elements, verify layout
-- **Shadcn UI** — Component lookup (`npx shadcn@latest add <component>`)
-- **Supabase** — DB operations (needs `SUPABASE_ACCESS_TOKEN`)
-
-## Quick Start
-
-```bash
-git clone https://github.com/mateusoliveirab/dot-claude-code-installation.git
-cd dot-claude-code-installation
-
-# Optional: set up env vars for MCPs
-cp .env.example .env
-# edit .env with your tokens
-
-bash install.sh
-```
-
-The script installs everything to `~/.claude/` and backs up existing configs. Restart Claude Code after install.
-
-**Needs:**
-- `jq` for MCP merging (`sudo apt install jq` or `brew install jq`)
-- `opencode` CLI for the task-splitter skill (`npm i -g opencode-ai`)
-- `CLOUDFLARE_ACCOUNT_ID` + `CLOUDFLARE_API_TOKEN` for the `cf-crawl` skill (see `.env.example`)
-
-## Customizing
-
-Add your own rules in `~/.claude/rules/`. Use frontmatter for control:
-
-```markdown
----
-description: React conventions
-paths: ["src/components/**/*"]
----
-
-- Use TypeScript
-- Prefer function components
-```
-
-Create new skills with `/skill-creator` or by copying `templates/skill-template/`. Audit existing skills with `python scripts/audit_skill.py path/to/skill`.
-
-Edit `~/.claude/settings.json` to tweak permissions.
+Personal Claude Code config — rules, skills, agents, and hooks versioned in git and symlinked into `~/.claude/`.
 
 ## Structure
 
 ```
-dot-claude-code-installation/
-├── install.sh              # One-command install
-├── global/
-│   ├── CLAUDE.md          # Core instructions
-│   ├── settings.json      # Permissions & preferences
-│   ├── mcp.json          # MCP server configs
-│   ├── skills/           # Reusable workflows
-│   │   ├── git-commit/
-│   │   ├── git-pr/
-│   │   ├── skill-creator/
-│   │   ├── opencode-task-splitter/
-│   │   └── cf-crawl/
-│   └── rules/            # Topic-specific rules
-└── templates/
-    └── skill-template/   # Copy this for new skills
+global/
+├── CLAUDE.md              # Core instructions
+├── settings.json          # Permissions, hooks, feature flags
+├── statusline-command.sh  # Status line script
+├── rules/                 # Auto-loaded topic rules
+├── skills/                # Slash command workflows
+├── agents/                # Subagent definitions
+└── hooks/                 # Pre/PostToolUse shell hooks
+templates/
+└── skill-template/        # Starter for new skills
 ```
 
-## Why This Approach?
+## Rules
 
-- **Modular** — Rules by topic instead of one huge file
-- **Versioned** — Track changes per rule in git
-- **Reusable** — Skills work across projects
-- **Safe** — Granular permissions, fewer prompts for routine stuff
+| File | Covers |
+|------|--------|
+| `git.md` | Conventional commit format |
+| `working-approach.md` | Validate before reporting done |
+| `verify-before-assume.md` | Verify external facts before using them |
 
-## Things I Learned Using This Daily
+## Skills
 
-### Auto Memory exists (and you probably don't know about it)
+| Skill | Command | What it does |
+|-------|---------|--------------|
+| `grill-me` | `/grill-me` | Relentless interview to stress-test a plan |
+| `claude-md-audit` | `/claude-md-audit` | Audit and rewrite CLAUDE.md files |
+| `skill-creator` | `/skill-creator` | Create and audit skills with quality scoring |
 
-Claude Code has automatic memory at `~/.claude/projects/<project>/memory/MEMORY.md`. It's **local** (not versioned), where Claude writes learnings between conversations.
+## Agents
 
-**The key insight:** Don't rely on it alone. Important learnings should go to versioned files:
+Subagent definitions for focused autonomous tasks:
 
-| Use MEMORY.md for | Use versioned files for |
-|-------------------|-------------------------|
-| AI drafts, personal preferences | Official docs, team knowledge |
-| Short-term reminders | Architectural decisions |
-| Trial and error notes | `CLAUDE.md`, `CONTRIBUTING.md`, `ARCHITECTURE.md`, `docs/` |
+| Agent | Trigger | What it does |
+|-------|---------|--------------|
+| `code-reviewer` | on demand | Reviews code for bugs and quality |
+| `debugger` | on demand | Systematic root-cause debugging |
+| `docs-updater` | Mon–Fri 03h | Audits and fixes README/CLAUDE.md gaps |
+| `pipeline-health` | Mon–Fri 04h | Detects failing, flaky, and slow CI workflows |
+| `security-scanner` | Mon–Fri 05h + PR | Scans for secrets, SAST issues, IaC misconfigs |
+| `dependency-watchdog` | Mondays 01h | Updates deps, fixes CVEs, opens PRs |
+| `daily-briefing` | Mon–Fri 06h | Compiles overnight agent findings into a digest |
 
-**Files that work well with Claude Code:**
-- `CLAUDE.md` — project-specific instructions for Claude
-- `CONTRIBUTING.md` — code standards, workflow, setup
-- `ARCHITECTURE.md` — technical decisions, why we chose X over Y
-- `docs/` — feature and module documentation
+> Cron agents are definitions only — scheduling requires GitHub Actions workflows.
 
-If something in MEMORY.md matters for the team, promote it to proper documentation.
+## Hooks
 
-[Full docs on auto memory →](docs/AUTO_MEMORY.md)
+- **PreToolUse** `rtk-rewrite.sh` — rewrites Bash commands through RTK for token savings
+- **PostToolUse** `bash-fail-guard.sh` — catches failure patterns after Bash runs
+- **PostToolUse** (inline) — `bash -n` on `.sh` edits, `jq empty` on `.json` edits
+
+## Install
+
+```bash
+git clone https://github.com/mateusoliveirab/dot-claude-code.git
+cd dot-claude-code
+```
+
+Then use `/link-config` inside Claude Code to symlink individual items into `~/.claude/`. Items are linked individually — your existing setup is never overwritten wholesale.
+
+## Env vars
+
+Copy `.env.example` and set:
+
+```bash
+CLAUDE_CODE_NEW_INIT=1
+CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1   # experimental: multi-agent teams
+```
+
+## Validate
+
+```bash
+jq empty global/settings.json
+python global/skills/skill-creator/scripts/audit_skill.py global/skills/<name>
+```
 
 ## License
 
-MIT — feel free to use, modify, and distribute as needed.
+MIT
