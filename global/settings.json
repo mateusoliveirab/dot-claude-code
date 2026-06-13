@@ -7,9 +7,6 @@
       "Bash(pkill:*)"
     ],
     "defaultMode": "acceptEdits",
-    "additionalDirectories": [
-      "/home/ubuntu/vscode/repositories/dot-claude-code/"
-    ],
     "alwaysAllow": [
       {
         "tool": "Read",
