@@ -31,7 +31,8 @@ jobs:
       - name: Run opencode docs-updater
         uses: anomalyco/opencode/github@latest
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # opencode's Google provider reads GOOGLE_GENERATIVE_AI_API_KEY.
+          GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GH_TOKEN: ${{ github.token }}
         with:
           # Bump as newer models ship; format is provider/model.
