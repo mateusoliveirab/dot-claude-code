@@ -1,108 +1,42 @@
 ---
-source: claude-workbench
 name: skill-refine
-description: >
-  Captures high-value learnings from a skill execution and applies targeted improvements
-  to the SKILL.md. Generic: works for any skill. Invoke right after running a skill when
-  steps diverged from the documented flow, new techniques were discovered, or undocumented
-  edge cases appeared. Synthesizes from conversation context automatically.
+description: Captures high-value learnings from a skill execution and applies targeted improvements to the SKILL.md. Generic: works for any skill. Invoke right after running a skill when steps diverged from the documented flow, new techniques were discovered, or undocumented edge cases appeared. Synthesizes from conversation context automatically.
 ---
 
 # skill-refine
 
-Refines a skill's SKILL.md based on execution learnings from the current session.
-Reads the skill file, synthesizes what diverged, proposes surgical edits, applies them,
-and syncs to the workbench mirror.
+Refine a skill's SKILL.md based on what actually happened this session. Only works with same-session context — the skill must have been executed in the current conversation.
 
-**Only works with same-session context.** The skill being refined must have been executed
-in the current conversation.
+## Resolve the skill
 
-## Inputs
+If the skill name is not passed as an argument, infer it from the most recently executed skill in the conversation. If ambiguous, ask: "Confirming: refining `{name}`, correct?"
 
-| Input | Default | Notes |
-|-------|---------|-------|
-| `skill-name` | inferred from context | Skill directory name, e.g. `coralogix-add-user` |
+Read `~/.claude/skills/{name}/SKILL.md`. Since these are symlinks into the dot-claude-code repo, editing the live path updates the canonical file — verify with `readlink ~/.claude/skills/{name}` if unsure.
 
-If `skill-name` is not passed as argument, identify the most recently executed skill from
-the conversation. If ambiguous, use AskUserQuestion to confirm.
+## Synthesize learnings
 
-## Paths
+Scan the conversation for what diverged or was discovered. Focus on:
 
-| File | Path |
-|------|------|
-| Live skill | `~/.claude/skills/{name}/SKILL.md` |
-| Mirror | `~/repos/claude-workbench/config/dot-claude/skills/{name}/SKILL.md` |
+- **Flow divergences** — steps documented one way but that required a different approach in practice
+- **Reliable techniques** — specific commands, patterns, or tool sequences that worked when others failed
+- **Undocumented edge cases** — situations that occurred but aren't covered by the current SKILL.md
+- **Failure modes** — steps that failed, why, and what the fix was
 
-Always update both. Use `cp` to sync the mirror: do not use the Write tool on the mirror file.
+Filter ruthlessly. Only capture learnings that are non-obvious, not already implied by existing text, and likely to recur. If a learning is ambiguous, ask before adding it.
 
-## Execution
+## Propose edits
 
-### Phase 0: Load
+For each learning, identify where it belongs:
+- Flow divergence → update that step inline
+- New edge case → add to an Edge cases section (create it if it doesn't exist)
+- New technical pattern → add inline within the relevant step
 
-1. Resolve the skill name (argument or conversation inference).
-2. If unclear, use AskUserQuestion: "Confirming: refining `{name}`, correct?"
-3. Read `~/.claude/skills/{name}/SKILL.md`.
-4. Confirm to the user: "Analyzing execution context for `/{name}`..."
+Show a concise before/after for each change. Confirm with the user before applying.
 
-### Phase 1: Synthesize learnings
+**Surgical edits only.** Don't rewrite sections that don't need changing. Don't touch frontmatter, section titles, or formatting conventions unless the learning requires it.
 
-Scan the conversation for high-value learnings: things that will improve assertiveness
-on the next execution. Focus on:
+If doing a structural refactor, verify explicitly that these survive: priority/ordering rules, negative constraints (never/always/do not), output shape rules, and decision tree logic. None of these are derivable from structure — they must be explicitly present in the new version.
 
-- **Flow divergences**: steps documented one way but that required a different approach in practice
-- **Reliable techniques**: specific commands, JS patterns, tool sequences that worked when others failed
-- **Undocumented edge cases**: situations that occurred but aren't covered by the existing Edge cases section
-- **Failure modes**: steps that failed, why, and what the fix was
+## Apply
 
-Filter ruthlessly: only capture learnings that are non-obvious, not already implied by
-the current SKILL.md, and likely to recur. Do not add learnings that restate existing content.
-
-Use AskUserQuestion if a learning is ambiguous or you need to confirm intent before adding.
-
-### Phase 2: Propose edits
-
-For each learning:
-1. Identify the target location in the SKILL.md:
-   - Execution flow step → update that specific step inline
-   - New edge case → add to Edge cases section (create the section if it doesn't exist)
-   - New technical pattern → add inline within the relevant step or in a dedicated block
-     (e.g., "Browser automation notes") for UI-heavy skills
-2. Draft the edit using the same formatting conventions as the existing file (tables, code blocks, bullet style).
-3. Present a concise before/after to the user.
-
-**Surgical edits only.** Do not rewrite sections that don't need changing.
-Do not alter frontmatter, section titles, or overall formatting conventions.
-
-**Structural refactors (new FORMAT.md split, section reorder, compression):** before applying, verify all behavioral rules survive the change. Check explicitly:
-1. Priority/ordering rules (e.g., "DPE > PLAT > KairosLIST")
-2. Negative constraints ("never", "always", "do not", "cap at")
-3. Output shape rules (format, grouping, numbering)
-4. Decision tree logic (if/when conditions)
-
-None of these are derivable from structure — they must be explicitly present in the new version.
-
-Confirm with the user before applying.
-
-### Phase 3: Apply + sync
-
-1. Apply all confirmed edits with the Edit tool at `~/.claude/skills/{name}/SKILL.md`.
-2. No cp needed — `~/.claude/skills/` entries are symlinks into the workbench mirror. Editing the live path already updates the canonical file. Verify with `readlink ~/.claude/skills/{name}` if unsure.
-3. Remind the user: "Run `/commit` to version the changes."
-
-## Principles
-
-- Surgical edits, not rewrites: preserve what works
-- Only add learnings that would meaningfully change how a future execution unfolds
-- Learnings belong where they'll be read: inline in the execution step, Edge cases section,
-  or a dedicated block for UI-heavy or browser automation skills
-- Never duplicate: if the learning is already implied by existing text, skip it
-- If a needed section doesn't exist (Edge cases, etc.), create it rather than cramming
-  content into an ill-fitting location
-
-## Example invocations
-
-```
-/skill-refine coralogix-add-user
-/skill-refine jira
-/skill-refine
-```
+Apply confirmed edits with the Edit tool at `~/.claude/skills/{name}/SKILL.md`. Then: "Run `/commit` to version the changes."
