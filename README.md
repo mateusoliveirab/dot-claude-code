@@ -21,6 +21,8 @@ global/
 └── hooks/                 # Pre/PostToolUse shell hooks
 templates/
 └── skill-template/        # Starter for new skills
+docs/
+└── agentic-framework/     # Agent/workflow design model
 ```
 
 ## Rules
@@ -45,6 +47,7 @@ Subagent definitions for focused autonomous tasks:
 
 | Agent | Trigger | What it does |
 |-------|---------|--------------|
+| `savant` | on demand | Strategic coordination, planning, risk review, and synthesis |
 | `code-reviewer` | on demand | Reviews code for bugs and quality |
 | `debugger` | on demand | Systematic root-cause debugging |
 | `docs-updater` | Mon–Fri 03h | Audits and fixes README/CLAUDE.md gaps |
