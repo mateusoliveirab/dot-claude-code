@@ -2,13 +2,15 @@
   "permissions": {
     "allow": [
       "Bash(npm run build:*)",
-      "mcp__shadcn-ui__get_component",
       "Bash(npm run lint:*)",
       "Bash(npx eslint:*)",
       "Bash(pkill:*)"
     ],
-    "defaultMode": "auto",
-"alwaysAllow": [
+    "defaultMode": "acceptEdits",
+    "additionalDirectories": [
+      "/home/ubuntu/vscode/repositories/dot-claude-code/"
+    ],
+    "alwaysAllow": [
       {
         "tool": "Read",
         "pathPattern": "src/**/*"
@@ -148,6 +150,10 @@
       }
     ]
   },
+  "worktree": {
+    "baseRef": "fresh"
+  },
+  "enableWorkflows": true,
   "statusLine": {
     "type": "command",
     "command": "bash $HOME/.claude/statusline-command.sh"
@@ -156,7 +162,8 @@
     "superpowers@claude-plugins-official": false,
     "codex@openai-codex": true,
     "frontend-design@claude-plugins-official": true,
-    "telegram@claude-plugins-official": true
+    "telegram@claude-plugins-official": false,
+    "supabase@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "openai-codex": {
@@ -166,16 +173,16 @@
       }
     }
   },
-  "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
-  },
   "alwaysThinkingEnabled": true,
-  "effortLevel": "low",
+  "effortLevel": "medium",
   "promptSuggestionEnabled": false,
-  "voiceEnabled": true,
+  "tui": "fullscreen",
   "autoDreamEnabled": true,
   "showThinkingSummaries": true,
   "skipDangerousModePermissionPrompt": true,
+  "theme": "dark-daltonized",
+  "teammateMode": "in-process",
+  "skipAutoPermissionPrompt": true,
   "autoMode": {
     "environment": [
       "Developer: mateusoliveirab — sole developer, personal workbench with no other users. The Interfere With Others and Modify Shared Resources block rules do not apply — there are no other users on this infrastructure. Protections for destructive operations, credential handling, and data exfiltration remain fully in force.",
@@ -183,5 +190,7 @@
       "Local dev servers: binding to localhost/127.0.0.1 on any port is trusted for development servers serving project files. Binding to 0.0.0.0 or mounting host paths outside the working directory requires confirmation.",
       "Deployment targets — Railway (hatch/api) and Cloudflare Pages (skelica, statusline, dontmarkdown): pushing new builds and restarting services via Railway CLI or Cloudflare Pages CLI is pre-approved without a prior preview step. Additive migrations (CREATE TABLE, ADD COLUMN with nullable/default, CREATE INDEX) are pre-approved. Any other migration (DROP, TRUNCATE, ALTER with NOT NULL, RENAME, or schema changes that may fail on existing data) requires confirmation. Changes to environment variables, secrets, or service settings via CLI dashboard commands require confirmation; editing config files in the repo and pushing them is covered by the push rule above."
     ]
-  }
+  },
+  "voiceEnabled": true,
+  "model": "opus"
 }

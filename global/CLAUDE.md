@@ -12,10 +12,16 @@
 - Dev server is usually already running — don't start it, test directly on localhost.
 - Use `git` CLI (not `gh` CLI) for version control.
 
+## MCP Servers
+
+- **Shadcn UI** — Add/lookup UI components
+- **Supabase** — Database, auth, storage operations
+
 ## Extended Guidelines
 
 See `~/.claude/rules/` for detailed topic-specific rules:
-- `working-approach.md` — Validation loop after fixes and code changes
-- `git.md` — Commit and PR conventions
+- `working-approach.md` — Fast mode usage, task execution
+- `mcp-usage.md` — MCP shortcuts and detailed usage
+- `auto-memory.md` — When/how to update MEMORY.md
 
 @RTK.md
