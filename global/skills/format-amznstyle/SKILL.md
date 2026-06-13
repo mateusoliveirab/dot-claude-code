@@ -1,6 +1,7 @@
 ---
-source: claude-workbench
 name: format-amznstyle
+upstream: https://github.com/mateusborges-kto/claude-workbench · config/dot-claude/skills/format-amznstyle/SKILL.md
+# To validate: compare with the source repo above
 description: >
   Reviews text for weasel words, vague language, and corporate jargon using
   Amazon's writing principles. Returns flagged issues and a polished version.

@@ -1,6 +1,8 @@
 ---
 name: skill-refine
 description: Captures high-value learnings from a skill execution and applies targeted improvements to the SKILL.md. Generic: works for any skill. Invoke right after running a skill when steps diverged from the documented flow, new techniques were discovered, or undocumented edge cases appeared. Synthesizes from conversation context automatically.
+upstream: https://github.com/mateusborges-kto/claude-workbench · config/dot-claude/skills/skill-refine/SKILL.md
+# To validate: compare with the source repo above
 ---
 
 # skill-refine
