@@ -1,0 +1,73 @@
+name: PR Auto-Reviewer (Bot PRs)
+
+# Cross-model review loop: docs-updater creates PRs with Gemini; this workflow
+# reviews them with Claude and auto-merges or closes with feedback — no human gate.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+
+jobs:
+  auto-review:
+    # Only review PRs opened by github-actions[bot] on docs/* branches.
+    if: |
+      github.event.pull_request.user.login == 'github-actions[bot]' &&
+      startsWith(github.head_ref, 'docs/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+      issues: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Review and auto-merge or close
+        uses: anthropics/claude-code-action@v1
+        env:
+          GH_TOKEN: ${{ github.token }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            You are the cross-model PR reviewer for this repository.
+
+            A Gemini-powered docs-updater agent just opened this PR. Your job is to
+            verify its changes are correct, then either auto-merge or close it with
+            clear feedback.
+
+            PR number: ${{ github.event.pull_request.number }}
+            Branch:    ${{ github.head_ref }}
+
+            ## Review steps
+
+            1. Run `gh pr diff ${{ github.event.pull_request.number }}` to see all changes.
+            2. Run `gh pr view ${{ github.event.pull_request.number }}` to read the PR body.
+            3. For each changed file:
+               - Confirm it is a documentation file (*.md, docs/*, README, CLAUDE.md, AGENTS.md, etc.).
+               - Confirm every claim is grounded in the actual repo (paths exist, commands work,
+                 no hallucinated content, no invented instructions).
+               - Confirm no source files (scripts, settings.json, hooks, skill/agent logic) were modified.
+
+            ## Decision
+
+            **APPROVE and merge** — all changes are accurate, safe, and doc-only:
+            ```
+            gh pr comment ${{ github.event.pull_request.number }} \
+              --body "✅ **Auto-approved by Claude Sonnet (cross-model review)**\n\nAll changes verified as accurate doc-only fixes. Auto-merging."
+            gh pr merge ${{ github.event.pull_request.number }} --squash --delete-branch
+            ```
+
+            **REJECT and close** — any change is wrong, risky, or touches non-doc files:
+            ```
+            gh pr comment ${{ github.event.pull_request.number }} \
+              --body "❌ **Auto-rejected by Claude Sonnet (cross-model review)**\n\n[List each problem: file, what the change says, why it is wrong or risky]\n\nThis PR has been closed. The docs-updater will retry on the next push to main."
+            gh pr close ${{ github.event.pull_request.number }}
+            ```
+
+            Be conservative: when in doubt, reject and explain clearly. Never merge
+            changes to non-documentation files under any circumstances.
